@@ -1,0 +1,14 @@
+@import '../../layout/variables.scss';
+
+.loadWallet {
+  color: $white !important;
+}
+
+.toolbar {
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.progressBar {
+  padding: 4px;
+}

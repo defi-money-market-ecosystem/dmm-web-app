@@ -1,0 +1,42 @@
+class Token {
+
+  constructor(address, name, symbol, decimals, imageUrl) {
+    this.address = address;
+    this.name = name;
+    this.symbol = symbol;
+    this.decimals = decimals;
+    this.imageUrl = imageUrl;
+  }
+
+}
+
+export const DAI = new Token(
+  process.env.REACT_APP_DAI_ADDRESS,
+  "Dai Stablecoin",
+  "DAI",
+  18,
+  "https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png"
+);
+
+export const USDC = new Token(
+  process.env.REACT_APP_USDC_ADDRESS,
+  "USD Coin",
+  "USDC",
+  6,
+  "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+);
+
+export const WETH = new Token(
+  process.env.REACT_APP_WETH_ADDRESS,
+  "Wrapped Ether",
+  "WETH",
+  18,
+  "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png"
+);
+
+export const tokens = [DAI, USDC, WETH];
+
+export const tokenAddressToTokenMap = tokens.reduce((map, token) => {
+  map[token.address] = token;
+  return map;
+}, {});
