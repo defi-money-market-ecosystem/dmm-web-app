@@ -120,36 +120,41 @@ class Swapper extends React.Component {
     if (allowance.eq(NumberUtil._0)) {
       const tokenToApprove = this.state.isMinting ? underlyingToken : dmmToken;
       isSetupComplete = await ERC20Service.approve(tokenToApprove.address, DmmWeb3Service.walletAddress(), dmmToken.address)
-        .then(async tx => {
-          DmmWeb3Service.watchHash(tx.transactionHash);
-          if (process.env.REACT_APP_ENVIRONMENT === 'LOCAL') {
-            // The local blockchain mines txns immediately.
-            const underlyingAllowance = await this.getAllowance(underlyingToken);
-            const dmmAllowance = await this.getAllowance(dmmToken);
-            this.setState({
-              dmmAllowance,
-              underlyingAllowance,
-            });
-          }
+        .on('transactionHash', async transactionHash => {
+          this.setState({
+            isWaitingForApprovalToMine: true,
+          });
+          DmmWeb3Service.watchHash(transactionHash);
+        })
+        .then(async () => {
+          const underlyingAllowance = await this.getAllowance(underlyingToken);
+          const dmmAllowance = await this.getAllowance(dmmToken);
+          this.setState({
+            dmmAllowance,
+            isWaitingForApprovalToMine: false,
+            underlyingAllowance,
+          });
           return true;
         })
         .catch((error) => {
           if (error.code === 4001) {
             // User cancelled the txn
             this.setState({
+              isWaitingForApprovalToMine: false,
               snackMessage: 'The transaction was cancelled'
             });
           } else if (error) {
             console.error("Approval error: ", error);
             this.setState({
-              unknownError: 'An unknown error occurred while interacting with DMM'
+              isWaitingForApprovalToMine: false,
+              unknownError: 'An unknown error occurred while interacting with DMM',
             });
           }
           return false;
         });
     }
 
-    if(!isSetupComplete) {
+    if (!isSetupComplete) {
       // If the allowance setting failed. Don't go any further.
       this.setState({
         isWaitingForSignature: false,
@@ -163,20 +168,30 @@ class Swapper extends React.Component {
       DmmTokenService.redeem(dmmToken.address, DmmWeb3Service.walletAddress(), this.state.inputValue);
 
     const isSuccessful = await receiptPromise
-      .then(transaction => {
-        DmmWeb3Service.watchHash(transaction.transactionHash);
+      .on('transactionHash', transactionHash => {
+        DmmWeb3Service.watchHash(transactionHash);
+        this.setState({
+          isWaitingForActionToMine: true,
+        });
+      })
+      .then(() => {
+        this.setState({
+          isWaitingForActionToMine: false,
+        });
         return true;
       })
       .catch(error => {
         if (error.code === 4001) {
           this.setState({
-            snackMessage: 'The transaction was cancelled'
+            isWaitingForActionToMine: false,
+            snackMessage: 'The transaction was cancelled',
           });
           return false;
         } else {
           console.error("Mint error: ", error);
           this.setState({
-            unknownError: 'An unknown error occurred while interacting with DMM'
+            isWaitingForActionToMine: false,
+            unknownError: 'An unknown error occurred while interacting with DMM',
           });
           return false;
         }
@@ -269,8 +284,14 @@ class Swapper extends React.Component {
       const allowanceTooltipTitle = this.state.underlyingAllowance.eq(NumberUtil._0) ? `You must first unlock ${token.symbol}` : '';
       const underlyingToken = this.state.underlyingToken;
 
+      const actionText = this.state.isMinting ? `${this.state.dmmToken.symbol} to mint` : `${this.state.dmmToken.symbol} to be redeemed`;
+      const tooltip = this.state.isWaitingForApprovalToMine ?
+        `Waiting for your ${token.symbol} to be unlock`
+        : this.state.isWaitingForActionToMine ? `Waiting for your ${actionText}`
+          : `Please confirm the signature`;
+
       const actionButtonView = this.state.isWaitingForSignature ? (
-        <Tooltip title={"Please confirm the signature"}>
+        <Tooltip title={tooltip}>
           <CircularProgress color={'primary'}/>
         </Tooltip>
       ) : (

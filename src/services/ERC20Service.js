@@ -16,9 +16,9 @@ class ERC20Service {
       .then(balanceString => new NumberUtil.BN(balanceString));
   }
 
-  static async approve(tokenAddress, owner, spender) {
+  static approve(tokenAddress, owner, spender) {
     const token = new DmmWeb3Service.instance.web3.eth.Contract(IERC20, tokenAddress);
-    return await token.methods.approve(spender, NumberUtil.MAX_UINT256.toString(10)).send({from: owner});
+    return token.methods.approve(spender, NumberUtil.MAX_UINT256.toString(10)).send({from: owner});
   }
 
 }

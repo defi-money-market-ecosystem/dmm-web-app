@@ -32,14 +32,14 @@ class DmmTokenService {
       .then(exchangeRateString => new NumberUtil.BN(exchangeRateString));
   }
 
-  static async mint(dmmTokenAddress, owner, underlyingAmount) {
+  static mint(dmmTokenAddress, owner, underlyingAmount) {
     const dmmToken = new DmmWeb3Service.instance.web3.eth.Contract(DmmToken, dmmTokenAddress);
-    return await dmmToken.methods.mint(underlyingAmount.toString(10)).send({from: owner});
+    return dmmToken.methods.mint(underlyingAmount.toString(10)).send({from: owner});
   }
 
-  static async redeem(dmmTokenAddress, owner, dmmAmount) {
+  static redeem(dmmTokenAddress, owner, dmmAmount) {
     const dmmToken = new DmmWeb3Service.instance.web3.eth.Contract(DmmToken, dmmTokenAddress);
-    return await dmmToken.methods.redeem(dmmAmount.toString(10)).send({from: owner});
+    return dmmToken.methods.redeem(dmmAmount.toString(10)).send({from: owner});
   }
 
 }
