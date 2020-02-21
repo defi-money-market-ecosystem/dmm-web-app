@@ -246,8 +246,8 @@ class Swapper extends React.Component {
     if (!this.state.dmmTokensMap) {
       const underlyingToken = this.state.underlyingToken;
       const underlyingToDmmTokensMap = await DmmTokenService.getDmmTokens();
-      const dmmToken = underlyingToDmmTokensMap[underlyingToken.address];
-      const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.address);
+      const dmmToken = underlyingToDmmTokensMap[underlyingToken.address.toLowerCase()];
+      const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.dmmTokenId);
       this.setState({
         dmmToken,
         dmmTokensMap: underlyingToDmmTokensMap,
@@ -256,8 +256,8 @@ class Swapper extends React.Component {
     }
 
     const underlyingToken = this.state.underlyingToken;
-    const dmmToken = this.state.dmmTokensMap[underlyingToken.address];
-    const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.address);
+    const dmmToken = this.state.dmmTokensMap[underlyingToken.address.toLowerCase()];
+    const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.dmmTokenId);
 
     const underlyingBalance = await this.getBalance(underlyingToken);
     const dmmBalance = await this.getBalance(dmmToken);
