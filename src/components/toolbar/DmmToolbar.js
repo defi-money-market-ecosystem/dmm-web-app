@@ -1,8 +1,8 @@
-import {Button, Toolbar} from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
 import React from "react";
 
 import styles from './DmmToolbar.module.scss';
+import DMMLogo from '../../images/dmm-logo.svg';
 import DmmWeb3Service from "../../services/DmmWeb3Service";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
@@ -31,25 +31,29 @@ class DmmToolbar extends React.Component {
 
   render = () => {
     const isWalletLoaded = !!DmmWeb3Service.onboard.getState().address;
-    let button;
-    if (this.state.isLoading) {
-      button = (
-        <CircularProgress className={styles.progressBar} color={"inherit"}/>
-      );
-    } else {
-      button = (
-        <Button className={styles.loadWallet} onClick={this.loadWallet}>
-          {isWalletLoaded ? DmmWeb3Service.onboard.getState().address : "Load Wallet"}
-        </Button>
-      );
-    }
 
     return (
-      <AppBar position="static">
-        <Toolbar className={styles.toolbar}>
-          {button}
-        </Toolbar>
-      </AppBar>
+      <div className={styles.navbar}>
+        <div className={styles.content}>
+          <div className={styles.logoWrapper}>
+            <div className={styles.logo}>
+              <img src={DMMLogo}/>
+            </div>
+            <div className={styles.logoText}>
+              DMM
+            </div>
+          </div>
+          <div className={styles.connectWalletButton}>
+            { this.state.isLoading ? (
+              <CircularProgress className={styles.progressBar} color={"inherit"}/>
+            ) : (
+              <Button className={styles.loadWallet} onClick={this.loadWallet}>
+                {isWalletLoaded ? DmmWeb3Service.onboard.getState().address : "Load Wallet"}
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
     );
   };
 

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import TopSection from './components/TopSection/TopSection';
 import DmmToolbar from './components/toolbar/DmmToolbar.js';
 
 import styles from './App.module.scss';
@@ -11,6 +12,7 @@ class App extends React.Component {
     return (
       <>
         <DmmToolbar/>
+        <TopSection/>
         <div className={styles.App}>
           <Swapper/>
         </div>

@@ -1,7 +1,53 @@
 @import '../../layout/variables.scss';
 
+
+.navbar {
+  height: 60px;
+  background: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  text-align: left;
+  padding-top: 10px;
+  overflow: hidden;
+  padding-right: 20px;
+  width: 100vw;
+  z-index: 999;
+}
+
+.content {
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+
+.logo {
+  border-radius: 50%;
+  width: 44px;
+  height: auto;
+  margin: 13px 9px 8px 15px;
+  display: inline-block;
+}
+
+.logo img {
+  width: 70px;
+  height: auto;
+}
+
+.logoText {
+  font-family: "Raleway",sans-serif;
+  font-size: 28px;
+  line-height: 60px;
+  display: inline-block;
+  vertical-align: top;
+}
+
 .loadWallet {
-  color: $white !important;
+  font-size: 15px !important;
+  height: 40px !important;
+  width: 150px !important;
+  margin-top: 10px !important;
 }
 
 .toolbar {
@@ -11,4 +57,6 @@
 
 .progressBar {
   padding: 4px;
+  margin: 8px 55px 0;
+  color: #327ccb;
 }
