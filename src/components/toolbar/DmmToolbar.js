@@ -47,8 +47,10 @@ class DmmToolbar extends React.Component {
             { this.state.isLoading ? (
               <CircularProgress className={styles.progressBar} color={"inherit"}/>
             ) : (
-              <Button className={styles.loadWallet} onClick={this.loadWallet}>
-                {isWalletLoaded ? DmmWeb3Service.onboard.getState().address : "Load Wallet"}
+              <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} onClick={this.loadWallet}>
+                {isWalletLoaded ? (
+                  <div><div>{'0x' + DmmWeb3Service.onboard.getState().address.substring(2,4) + '...' + DmmWeb3Service.onboard.getState().address.slice(-4)}</div><div className={styles.walletConnected}>Wallet Connected</div></div>
+                ) : "Connect Wallet"}
               </Button>
             )}
           </div>

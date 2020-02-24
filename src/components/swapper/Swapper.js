@@ -277,7 +277,11 @@ class Swapper extends React.Component {
   render = () => {
     if (!DmmWeb3Service.walletAddress()) {
       return (
-        <span>Connect your wallet!</span>
+        <div className={styles.overlay}>
+          <h3>To get started</h3>
+          <h2>Connect your wallet</h2>
+          <h4>What is a wallet?</h4>
+        </div>
       );
     } else {
       const token = this.state.isMinting ? this.state.underlyingToken : this.state.dmmToken;

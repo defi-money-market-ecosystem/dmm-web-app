@@ -1,0 +1,114 @@
+
+.TopBar {
+  padding-top: 80px;
+  background: #deeeff;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 250px;
+}
+
+.leftStats {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+  padding-top: 30px;
+}
+
+.rightStat {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+  text-align: left;
+  padding-left: 10px;
+  padding-top: 30px;
+}
+
+.totalStat {
+  width: fit-content;
+  text-align: right;
+  float: right;
+  padding-right: 10px;
+  border-right: 5px solid #327ccb;
+}
+
+.bigNum {
+  font-size: 6em;
+  line-height: 0.9em;
+}
+
+.statSubtitle {
+  font-weight: 100;
+  font-size: 1.2em;
+}
+
+.aprWrapper {
+  font-weight: 100;
+  font-size: 2em;
+  line-height: 1.65em;
+}
+
+.usdToDmm {
+  text-align: left;
+}
+
+@-webkit-keyframes fadeAnimation {
+  0%   { opacity: 0; }
+  4%   { opacity: 1; }
+  50%  { opacity: 1; }
+  54%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+@-moz-keyframes fadeAnimation {
+  0%   { opacity: 0; }
+  4%   { opacity: 1; }
+  50%  { opacity: 1; }
+  54%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+@-o-keyframes fadeAnimation {
+  0%   { opacity: 0; }
+  4%   { opacity: 1; }
+  50%  { opacity: 1; }
+  54%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes fadeAnimation {
+  0%   { opacity: 0; }
+  4%   { opacity: 1; }
+  50%  { opacity: 1; }
+  54%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.daiInterestRate,
+.usdcInterestRate {
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.daiInterestRate {
+  /*-webkit-animation: fadeAnimation 8s 4s infinite; /* Safari 4+ */
+  /*-moz-animation:    fadeAnimation 8s 4s infinite; /* Fx 4+ */
+  /*-o-animation:      fadeAnimation 8s 4s infinite; /* Opera 12+ */
+  /*animation:         fadeAnimation 8s 4s infinite; /* IE 10+, Fx 29+ */
+  /*opacity: 0;*/
+}
+
+.usdcInterestRate {
+  margin-top: -40px;
+  /*-webkit-animation: fadeAnimation 8s infinite; /* Safari 4+ */
+  /*-moz-animation:    fadeAnimation 8s infinite; /* Fx 5+ */
+  /*-o-animation:      fadeAnimation 8s infinite; /* Opera 12+ */
+  /*animation:         fadeAnimation 8s infinite; /* IE 10+, Fx 29+ */
+}
+
+.light {
+  font-weight: 100;
+}
+
+.bold {
+  font-weight: 500;
+}
