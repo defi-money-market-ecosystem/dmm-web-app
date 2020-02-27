@@ -3,7 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import {CircularProgress, Paper, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DmmWeb3Service from "../../services/DmmWeb3Service";
-import {USDC} from "../../models/Tokens";
+import {USDC, DAI} from "../../models/Tokens";
 import {humanize} from "../../utils/NumberUtil";
 
 import styles from "./Swapper.module.scss";
@@ -15,9 +15,11 @@ import Alert from "@material-ui/lab/Alert";
 import NumberUtil from "../../utils/NumberUtil";
 import {fromDecimalToBN} from "../../utils/NumberUtil";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import SwapPanel from '../SwapPanel/SwapPanel';
+import BalancesPanel from '../BalancesPanel/BalancesPanel';
+
 
 class Swapper extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -29,10 +31,11 @@ class Swapper extends React.Component {
       dmmBalance: NumberUtil._0,
       isMinting: true,
       inputValue: undefined,
+      isLoading: false,
     };
 
     this.pollForData().then(() => {
-      console.log("Finished initial poll")
+      console.log("Finished initial poll");
     });
 
     this.subscriptionId = setInterval(async () => {
@@ -41,9 +44,9 @@ class Swapper extends React.Component {
 
     DmmWeb3Service.onWalletChange(() => {
       this.pollForData().then(() => {
-        console.log("Finished poll after wallet change")
+        console.log("Finished poll after wallet change");
       });
-    })
+    });
   }
 
   onSnackbarClose = () => {
@@ -52,54 +55,6 @@ class Swapper extends React.Component {
       unknownError: undefined,
       snackMessage: undefined,
     })
-  };
-
-  onInputAmountChange = (event) => {
-    if (event.target.value === "") {
-      this.setState({
-        inputError: undefined,
-        value: "",
-        inputValue: NumberUtil._0,
-      });
-      return;
-    }
-
-    this.setState({
-      value: event.target.value,
-    });
-
-    const value = Number.parseFloat(event.target.value);
-    const regex = /^[+-]?(\d+|\.\d+|\d+\.\d+|\d+\.)$/;
-    if (Number.isNaN(value) || !regex.test(event.target.value)) {
-      this.setState({
-        inputError: "Must be a valid number",
-      });
-      return;
-    }
-
-    const underlyingToken = this.state.underlyingToken;
-    if (value <= 0) {
-      this.setState({
-        inputError: "Must be greater than 0"
-      });
-    } else if (value.toString().includes("e+")) {
-      this.setState({
-        inputError: `Number is too large`
-      });
-    } else if (value.countDecimals() > underlyingToken.decimals) {
-      this.setState({
-        inputError: `Must only have up to ${underlyingToken.decimals} decimals`
-      });
-    } else if (this.state.underlyingBalance.lt(fromDecimalToBN(value, underlyingToken.decimals))) {
-      this.setState({
-        inputError: `Insufficient balance`
-      });
-    } else {
-      this.setState({
-        inputError: undefined,
-        inputValue: fromDecimalToBN(value, underlyingToken.decimals),
-      });
-    }
   };
 
   doOperation = async () => {
@@ -227,15 +182,16 @@ class Swapper extends React.Component {
       });
   };
 
-  switchIsMinting = (isMinting) => {
+  switchIsMinting(isMinting) {
     this.setState({
       isMinting,
       value: "",
     });
   };
 
-  componentWillUnmount = () => {
+  componentWillUnmount() {
     clearInterval(this.subscriptionId);
+    DmmWeb3Service.removeOnWalletChange(this.walletChangeUid);
   };
 
   pollForData = async () => {
@@ -274,16 +230,19 @@ class Swapper extends React.Component {
     });
   };
 
-  render = () => {
-    if (!DmmWeb3Service.walletAddress()) {
-      return (
-        <div className={styles.overlay}>
-          <h3>To get started</h3>
-          <h2>Connect your wallet</h2>
-          <h4>What is a wallet?</h4>
-        </div>
-      );
-    } else {
+  loadWallet = async () => {
+    this.setState({isLoading: true});
+    const result = await DmmWeb3Service.onboard.walletSelect();
+    if (result) {
+      await DmmWeb3Service.instance.wallet.connect();
+    }
+    this.setState({isLoading: false});
+  };
+
+  render() {
+    const isWalletLoaded = !!DmmWeb3Service.onboard.getState().address;
+
+    if (DmmWeb3Service.walletAddress() && this.state.dmmToken) { //TODO - figure out why I need to check for dmmToken when I didn't before
       const token = this.state.isMinting ? this.state.underlyingToken : this.state.dmmToken;
       const allowanceTooltipTitle = this.state.underlyingAllowance.eq(NumberUtil._0) ? `You must first unlock ${token.symbol}` : '';
       const underlyingToken = this.state.underlyingToken;
@@ -307,6 +266,67 @@ class Swapper extends React.Component {
       );
 
       return (
+        <div className={styles.swapperWrapper}>
+          <SwapPanel
+            isMinting={this.state.isMinting}
+            underlyingToken={this.state.underlyingToken}
+            underlyingBalance={this.state.underlyingBalance}
+            dmmBlance={this.state.dmmBalance}
+            exchangeRate={this.state.exchangeRate}
+            onDoOperation={() => this.doOperation()}
+            updateUnderlying={(newToken) => this.setState({ underlyingToken: (newToken === 'USDC' ? USDC : DAI)})}
+          />
+          <BalancesPanel/>
+        </div>
+      );
+    }
+    else {
+      return (
+        <div className={styles.swapperWrapper}>
+          <div className={styles.overlay}>
+            <div className={styles.connectWalletButton}>
+              <div className={styles.title}>To get started</div>
+              { this.state.isLoading ? (
+                <CircularProgress className={styles.progressBar} color={"inherit"}/>
+              ) : (
+                <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} onClick={this.loadWallet}>
+                  {isWalletLoaded ? (
+                    "Wallet Loaded"
+                  ) : "Connect Your Wallet"}
+                </Button>
+              )}
+              <Tooltip title={'DMM tokens exist on the Ethereum blockchain. To hold, swap, or transfer DMM tokens you require an Ethereum wallet. MetaMask is a good option that works with most browsers'}>
+                <div className={styles.whatsAWallet}><div className={styles.questionIcon}>?</div><div className={styles.helperText}>What's a wallet?</div></div>
+              </Tooltip>
+            </div>
+          </div>
+          <SwapPanel
+            isMinting={null}
+            underlyingToken={null}
+            underlyingBalance={null}
+            dmmBlance={null}
+            exchangeRate={null}
+            disabled
+          />
+          <BalancesPanel/>
+          <Snackbar open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}
+                    autoHideDuration={5000}
+                    onClose={this.onSnackbarClose}>
+            <Alert severity={this.state.snackError || this.state.unknownError ? "error" : "info"}
+                   onClose={this.onSnackbarClose}>
+              {this.state.snackError || this.state.unknownError || this.state.snackMessage}
+            </Alert>
+          </Snackbar>
+        </div>
+      );
+    }
+
+
+
+
+
+
+      /*return (
         <Grid container>
           <Grid item xs={false} md={1} lg={3} xl={4}/>
           <Grid item xs={12} md={10} lg={6} xl={4}>
@@ -357,7 +377,16 @@ class Swapper extends React.Component {
           </Snackbar>
         </Grid>
       );
-    }
+
+    } else {
+      return (
+        <div className={styles.overlay}>
+          <h3>To get started</h3>
+          <h2>Connect your wallet</h2>
+          <h4>What is a wallet?</h4>
+        </div>
+      );
+    }*/
   };
 
 }

@@ -145,16 +145,6 @@ h6 {
 }
 
 button {
-  color: white !important;
-  background-color: #327ccb !important;
-  font-size: 17px;
-  font-weight: 100 !important;
-  box-shadow: rgba(0,0,0,0.5) 1px 1px 8px -4px, rgba(0,0,0,0.5) 1px 1px 4px -4px;
-  transition: all 0.2s ease-in-out;
-  -webkit-border-radius: 5px !important;
-  -moz-border-radius: 5px !important;
-  border-radius: 5px !important;
-
   &.purple {
     background: $primary;
     &:hover {
@@ -181,11 +171,6 @@ button {
       border-color: $pink;
     }
   }
-}
-
-button:hover {
-  box-shadow: rgba(0,0,0,0.5) 1px 1px 8px -4px, rgba(0,0,0,0.5) 1px 1px 4px -4px;
-  background-color: #5490d0 !important;
 }
 
 input {

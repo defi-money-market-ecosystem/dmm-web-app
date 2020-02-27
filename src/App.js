@@ -7,6 +7,11 @@ import styles from './App.module.scss';
 import Swapper from "./components/swapper/Swapper";
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+
+  }
 
   render = () => {
     return (

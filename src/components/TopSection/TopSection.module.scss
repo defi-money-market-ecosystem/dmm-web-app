@@ -1,13 +1,19 @@
 
 .TopBar {
   padding-top: 80px;
-  background: #deeeff;
+  /*background: #deeeff;*/
+  background: linear-gradient(360deg,#327ccb,#4f94de 5%,#8bbbef 15%,#bdddff 25%,#deeeff 40%);
 }
 
 .content {
   max-width: 1200px;
   margin: 0 auto;
-  height: 250px;
+  /*height: 250px;*/
+  height: 100vh;
+}
+
+.title {
+  text-align: center;
 }
 
 .leftStats {

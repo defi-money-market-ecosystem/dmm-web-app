@@ -12,6 +12,9 @@ class TopSection extends React.Component {
     return (
       <div className={styles.TopBar}>
         <div className={styles.content}>
+          <div className={styles.title}>
+            DMM Swap App (or something idk)
+          </div>
           <div className={styles.leftStats}>
             <div className={styles.totalStat}>
               <div className={styles.bigNum}>

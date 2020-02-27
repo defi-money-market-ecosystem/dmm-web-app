@@ -1,5 +1,6 @@
 import Button from "@material-ui/core/Button";
 import React from "react";
+import FiatAdapter from 'fiat-adapter';
 
 import styles from './DmmToolbar.module.scss';
 import DMMLogo from '../../images/dmm-logo.svg';
@@ -10,7 +11,10 @@ class DmmToolbar extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      fiatAdapterOpen: false,
+    };
+
     this.walletChangeUid = DmmWeb3Service.onWalletChange((wallet) => {
       this.setState({address: wallet.address});
     });
@@ -43,18 +47,30 @@ class DmmToolbar extends React.Component {
               DMM
             </div>
           </div>
-          <div className={styles.connectWalletButton}>
-            { this.state.isLoading ? (
-              <CircularProgress className={styles.progressBar} color={"inherit"}/>
-            ) : (
-              <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} onClick={this.loadWallet}>
-                {isWalletLoaded ? (
-                  <div><div>{'0x' + DmmWeb3Service.onboard.getState().address.substring(2,4) + '...' + DmmWeb3Service.onboard.getState().address.slice(-4)}</div><div className={styles.walletConnected}>Wallet Connected</div></div>
-                ) : "Connect Wallet"}
+          <div className={styles.buttonsWrapper}>
+            <div className={styles.purchaseCryptoButton}>
+              <Button className={styles.loadWallet} onClick={() => this.setState({ fiatAdapterOpen: true })}>
+                Buy Crypto
               </Button>
-            )}
+            </div>
+            <div className={styles.connectWalletButton}>
+              { this.state.isLoading ? (
+                <CircularProgress className={styles.progressBar} color={"inherit"}/>
+              ) : (
+                <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} onClick={this.loadWallet}>
+                  {isWalletLoaded ? (
+                    <div><div>{'0x' + DmmWeb3Service.onboard.getState().address.substring(2,4) + '...' + DmmWeb3Service.onboard.getState().address.slice(-4)}</div><div className={styles.walletConnected}>Wallet Connected</div></div>
+                  ) : "Connect Wallet"}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
+        <FiatAdapter
+          open={this.state.fiatAdapterOpen}
+          onClose={() => this.setState({ fiatAdapterOpen: false })}
+          allowedCryptos={['DAI','USDC']}
+        />
       </div>
     );
   };

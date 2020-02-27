@@ -3,6 +3,7 @@ import Web3 from 'web3'
 export const BN = Web3.utils.BN;
 
 export const _0 = new BN(0);
+export const _1 = new BN('1000000000000000000');
 export const _10 = new BN(10);
 export const humanPrecision = 6;
 
@@ -58,6 +59,7 @@ Number.prototype.countDecimals = function () {
 
 export default {
   _0,
+  _1,
   BN,
   MAX_UINT256,
   MAX_INT256,
