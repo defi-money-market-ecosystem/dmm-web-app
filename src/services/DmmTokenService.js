@@ -51,10 +51,10 @@ class DmmTokenService {
       return amountBN;
     } else if (dmmToken.decimals > 18) {
       const diff = dmmToken.decimals - 18;
-      return amountBN.div(new NumberUtil.BN('10)'.pow(diff)))
+      return amountBN.div(new NumberUtil.BN(10).pow(new NumberUtil.BN(diff)));
     } else /* decimals < 18 */ {
       const diff = 18 - dmmToken.decimals;
-      return amountBN.mul(new NumberUtil.BN('10)'.pow(diff)))
+      return amountBN.mul(new NumberUtil.BN(10).pow(new NumberUtil.BN(diff)));
     }
   }
 

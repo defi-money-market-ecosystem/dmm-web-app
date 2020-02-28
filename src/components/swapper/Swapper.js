@@ -248,10 +248,14 @@ class Swapper extends React.Component {
       const underlyingToDmmTokensMap = await DmmTokenService.getDmmTokens();
       const dmmToken = underlyingToDmmTokensMap[underlyingToken.address.toLowerCase()];
       const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.dmmTokenId);
+      const activeSupply = await DmmTokenService.getActiveSupply(dmmToken);
+      const totalSupply = await DmmTokenService.getTotalSupply(dmmToken);
       this.setState({
         dmmToken,
         dmmTokensMap: underlyingToDmmTokensMap,
         exchangeRate,
+        activeSupply,
+        totalSupply
       });
     }
 
@@ -306,6 +310,12 @@ class Swapper extends React.Component {
         <Grid container>
           <Grid item xs={false} md={1} lg={3} xl={4}/>
           <Grid item xs={12} md={10} lg={6} xl={4}>
+            <Paper>
+              Active Supply: {this.state.activeSupply ? Number.parseFloat(humanize(this.state.activeSupply, 18)).toLocaleString("en-US", {style: "decimal", maximumFractionDigits: 0}) : "0"}
+            </Paper>
+            <Paper>
+              Total Supply: {this.state.totalSupply ? Number.parseFloat(humanize(this.state.totalSupply, 18)).toLocaleString("en-US", {style: "decimal", maximumFractionDigits: 0}) : "0"}
+            </Paper>
             <Paper>
               <Grid container className={styles.standardMargin}>
                 <Grid item xs={12}>
