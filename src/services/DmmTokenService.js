@@ -28,6 +28,36 @@ class DmmTokenService {
     return new NumberUtil.BN((await response.json())["data"]["exchange_rate"]);
   }
 
+  static async getActiveSupply(dmmToken) {
+    const response = await fetch(
+      `${Index.baseUrl}/v1/dmm/tokens/${dmmToken.dmmTokenId.toString(10)}/active-supply`,
+      {headers: {'Accept': 'application/json'}},
+    );
+    const rawBN = new NumberUtil.BN((await response.json())["data"]["active_supply"]);
+    return DmmTokenService.convertNumberToWei(dmmToken, rawBN);
+  }
+
+  static async getTotalSupply(dmmToken) {
+    const response = await fetch(
+      `${Index.baseUrl}/v1/dmm/tokens/${dmmToken.dmmTokenId.toString(10)}/total-supply`,
+      {headers: {'Accept': 'application/json'}},
+    );
+    const rawBN = new NumberUtil.BN((await response.json())["data"]["total_supply"]);
+    return DmmTokenService.convertNumberToWei(dmmToken, rawBN);
+  }
+
+  static convertNumberToWei(dmmToken, amountBN) {
+    if(dmmToken.decimals === 18) {
+      return amountBN;
+    } else if (dmmToken.decimals > 18) {
+      const diff = dmmToken.decimals - 18;
+      return amountBN.div(new NumberUtil.BN('10)'.pow(diff)))
+    } else /* decimals < 18 */ {
+      const diff = 18 - dmmToken.decimals;
+      return amountBN.mul(new NumberUtil.BN('10)'.pow(diff)))
+    }
+  }
+
   static mint(dmmTokenAddress, owner, underlyingAmount) {
     const dmmToken = new DmmWeb3Service.instance.web3.eth.Contract(DmmToken, dmmTokenAddress);
     return dmmToken.methods.mint(underlyingAmount.toString(10)).send({from: owner});
