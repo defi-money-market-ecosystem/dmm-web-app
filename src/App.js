@@ -2,9 +2,11 @@ import React from 'react';
 
 import TopSection from './components/TopSection/TopSection';
 import DmmToolbar from './components/toolbar/DmmToolbar.js';
+import Swapper from "./components/swapper/Swapper";
+import Footer from './components/Footer/Footer';
 
 import styles from './App.module.scss';
-import Swapper from "./components/swapper/Swapper";
+
 import DmmWeb3Service from "./services/DmmWeb3Service";
 import NumberUtil from "./utils/NumberUtil";
 import ERC20Service from "./services/ERC20Service";
@@ -16,6 +18,11 @@ import {humanize} from "./utils/NumberUtil";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import {fromDecimalToBN} from "./utils/NumberUtil";
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+
+library.add(fab);
 
 class App extends React.Component {
   constructor(props) {
@@ -204,7 +211,14 @@ class App extends React.Component {
   };
 
   pollForData = async () => {
+
     if (!DmmWeb3Service.walletAddress()) {
+      const underlyingToDmmTokensMap = await DmmTokenService.getDmmTokens();
+      const dmmToken = underlyingToDmmTokensMap[DAI.address.toLowerCase()];
+      const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.dmmTokenId);
+      this.setState({
+        exchangeRate
+      });
       return;
     }
 
@@ -266,7 +280,9 @@ class App extends React.Component {
     return (
       <>
         <DmmToolbar/>
-        <TopSection/>
+        <TopSection
+          exchangeRate={this.state.exchangeRate}
+        />
         <div className={styles.App}>
           <Swapper
             dmmToken={this.state.dmmToken}
@@ -302,6 +318,7 @@ class App extends React.Component {
             {this.state.snackError || this.state.unknownError || this.state.snackMessage}
           </Alert>
         </Snackbar>
+        <Footer/>
       </>
     );
   }

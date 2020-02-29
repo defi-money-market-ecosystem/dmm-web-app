@@ -14,6 +14,10 @@
   font-family: 'Open Sans', sans-serif;
 }
 
+.BalancesPanel.disabled {
+  opacity: 0.5;
+}
+
 .title {
   width: 100%;
   text-align: left;

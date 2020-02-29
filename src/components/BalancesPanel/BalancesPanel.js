@@ -19,7 +19,7 @@ class BalancesPanel extends React.Component {
   /* TODO - Add US dollar value of assets (specifically m assets, but with ETH it'll also be useful). Will become more useful as the value of m assets and the underlying assets diverge. Can also have a dropdown in the upper right with a choice of currency. */
   render() {
     return (
-      <div className={styles.BalancesPanel}>
+      <div className={`${styles.BalancesPanel} ${this.props.disabled && styles.disabled}`}>
         <div className={styles.title}>
           Balances
         </div>

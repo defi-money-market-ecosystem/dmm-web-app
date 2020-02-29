@@ -123,6 +123,7 @@ class Swapper extends React.Component {
             underlyingToken={this.props.underlyingToken}
             mdaiToken={this.props.mdaiToken}
             musdcToken={this.props.musdcToken}
+            disabled
           />
         </div>
       );
