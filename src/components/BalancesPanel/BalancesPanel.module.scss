@@ -10,8 +10,46 @@
   border-radius: 5px;
   background: white;
   vertical-align: top;
+  padding: 20px 3%;
+  font-family: 'Open Sans', sans-serif;
 }
 
+.title {
+  width: 100%;
+  text-align: left;
+  font-size: 1.3em;
+  margin-bottom: 5px;
+}
+
+.bottomBorder {
+  height: 2px;
+  background: #327ccb;
+  width: 50px;
+  margin-bottom: 13px;
+}
+
+.balanceRow {
+  width: 100%;
+  border-bottom: 1px solid #e2e2e2;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.balanceRow:last-of-type {
+  border: none;
+}
+
+.asset {
+  width: fit-content;
+  font-weight: 100;
+}
+
+.amount {
+  width: fit-content;
+  font-weight: 400;
+}
 
 .light {
   font-weight: 100;
