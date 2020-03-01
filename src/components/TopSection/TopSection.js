@@ -1,12 +1,19 @@
 import React from 'react';
 import CountUp from 'react-countup';
 import NumberUtil, {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
+import {USDC, DAI} from "../../models/Tokens";
 
 import styles from './TopSection.module.scss';
 
 class TopSection extends React.Component {
   constructor(props) {
     super(props);
+  }
+
+  static numberWithCommas(x) {
+    const parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
   }
 
   render() {
@@ -19,10 +26,10 @@ class TopSection extends React.Component {
           <div className={styles.leftStats}>
             <div className={styles.totalStat}>
               <div className={styles.bigNum}>
-                1,436,725
+                { TopSection.numberWithCommas(humanize(this.props.totalActive, DAI.decimals, 0)) }
               </div>
               <div className={styles.statSubtitle}>
-                DMM Purchased
+                DMM Tokens Purchased
               </div>
             </div>
           </div>
@@ -58,7 +65,7 @@ class TopSection extends React.Component {
                   decimal="."
                   prefix=""
                   suffix=""
-                /><span className={styles.light}> DMM</span>
+                /><span className={styles.light}> mDAI/mUSDC</span>
               </div>
             </div>
           </div>

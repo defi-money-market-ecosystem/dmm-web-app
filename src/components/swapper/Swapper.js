@@ -82,6 +82,7 @@ class Swapper extends React.Component {
             underlyingToken={this.props.underlyingToken}
             mdaiToken={this.props.mdaiToken}
             musdcToken={this.props.musdcToken}
+            exchangeRate={this.props.exchangeRate}
           />
         </div>
       );
@@ -123,6 +124,7 @@ class Swapper extends React.Component {
             underlyingToken={this.props.underlyingToken}
             mdaiToken={this.props.mdaiToken}
             musdcToken={this.props.musdcToken}
+            exchangeRate={null}
             disabled
           />
         </div>

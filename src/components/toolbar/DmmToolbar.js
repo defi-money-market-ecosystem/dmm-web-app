@@ -44,7 +44,7 @@ class DmmToolbar extends React.Component {
               <img src={DMMLogo}/>
             </div>
             <div className={styles.logoText}>
-              DMM
+              DMM <span className={styles.swapText}>Swap</span>
             </div>
           </div>
           <div className={styles.buttonsWrapper}>

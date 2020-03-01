@@ -46,7 +46,10 @@ class App extends React.Component {
       mdaiBalance: NumberUtil._0,
       musdcBalance: NumberUtil._0,
       mdaiToken: null,
-      musdcToken: null
+      musdcToken: null,
+      activeSupply: NumberUtil._0,
+      totalSupply: NumberUtil._0,
+      totalActive: NumberUtil._0
     };
 
     this.pollForData().then(() => {
@@ -211,13 +214,19 @@ class App extends React.Component {
   };
 
   pollForData = async () => {
-
     if (!DmmWeb3Service.walletAddress()) {
       const underlyingToDmmTokensMap = await DmmTokenService.getDmmTokens();
       const dmmToken = underlyingToDmmTokensMap[DAI.address.toLowerCase()];
       const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.dmmTokenId);
+      const activeSupply = await DmmTokenService.getActiveSupply(dmmToken);
+      const totalSupply = await DmmTokenService.getTotalSupply(dmmToken);
+      const mdaiActive = await DmmTokenService.getActiveSupply(underlyingToDmmTokensMap[DAI.address.toLowerCase()]);
+      const musdcActive = await DmmTokenService.getActiveSupply(underlyingToDmmTokensMap[USDC.address.toLowerCase()]);
       this.setState({
-        exchangeRate
+        exchangeRate,
+        activeSupply,
+        totalSupply,
+        totalActive: mdaiActive + musdcActive
       });
       return;
     }
@@ -227,16 +236,27 @@ class App extends React.Component {
       const underlyingToDmmTokensMap = await DmmTokenService.getDmmTokens();
       const dmmToken = underlyingToDmmTokensMap[underlyingToken.address.toLowerCase()];
       const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.dmmTokenId);
+      const activeSupply = await DmmTokenService.getActiveSupply(dmmToken);
+      const totalSupply = await DmmTokenService.getTotalSupply(dmmToken);
+      const mdaiActive = await DmmTokenService.getActiveSupply(underlyingToDmmTokensMap[DAI.address.toLowerCase()]);
+      const musdcActive = await DmmTokenService.getActiveSupply(underlyingToDmmTokensMap[USDC.address.toLowerCase()]);
       this.setState({
         dmmToken,
         dmmTokensMap: underlyingToDmmTokensMap,
         exchangeRate,
+        activeSupply,
+        totalSupply,
+        totalActive: mdaiActive + musdcActive
       });
     }
 
     const underlyingToken = this.state.underlyingToken;
     const dmmToken = this.state.dmmTokensMap[underlyingToken.address.toLowerCase()];
     const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.dmmTokenId);
+    const activeSupply = await DmmTokenService.getActiveSupply(dmmToken);
+    const totalSupply = await DmmTokenService.getTotalSupply(dmmToken);
+    const mdaiActive = await DmmTokenService.getActiveSupply(this.state.dmmTokensMap[DAI.address.toLowerCase()]);
+    const musdcActive = await DmmTokenService.getActiveSupply(this.state.dmmTokensMap[USDC.address.toLowerCase()]);
 
     const underlyingBalance = await this.getBalance(underlyingToken);
     const dmmBalance = await this.getBalance(dmmToken);
@@ -263,7 +283,10 @@ class App extends React.Component {
       mdaiBalance,
       musdcBalance,
       mdaiToken,
-      musdcToken
+      musdcToken,
+      activeSupply,
+      totalSupply,
+      totalActive: mdaiActive + musdcActive
     });
   };
 
@@ -282,6 +305,7 @@ class App extends React.Component {
         <DmmToolbar/>
         <TopSection
           exchangeRate={this.state.exchangeRate}
+          totalActive={this.state.totalActive}
         />
         <div className={styles.App}>
           <Swapper
@@ -308,6 +332,8 @@ class App extends React.Component {
             musdcBalance={this.state.musdcBalance}
             mdaiToken={this.state.mdaiToken}
             musdcToken={this.state.musdcToken}
+            activeSupply={this.state.activeSupply}
+            totalSupply={this.state.totalSupply}
           />
         </div>
         <Snackbar open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}

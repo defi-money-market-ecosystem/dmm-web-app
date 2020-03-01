@@ -18,7 +18,7 @@ export const humanize = (bn, bnPrecision, targetPrecision) => {
     bn = new BN(bn);
   }
 
-  if (!targetPrecision) {
+  if (!targetPrecision && targetPrecision !== 0) {
     targetPrecision = humanPrecision;
   }
 
