@@ -1,0 +1,55 @@
+
+.Footer {
+  text-align: right;
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: white;
+  z-index: 999;
+
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    -webkit-transition: opacity 0.3s ease-in-out;
+    -moz-transition: opacity 0.3s ease-in-out;
+    -ms-transition: opacity 0.3s ease-in-out;
+    -o-transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
+
+    .contractAddress {
+      width: fit-content;
+      font-weight: 100;
+      font-size: 0.7em;
+      float: left;
+      line-height: 50px;
+    }
+    
+    .copyright {
+      font-size: 0.6em;
+      opacity: 0.8;
+      font-weight: 100;
+      line-height: 50px;
+      text-align: center;
+      z-index: 800;
+      width: fit-content;
+      max-width: 1200px;
+      margin: 0 auto -50px;
+    }
+
+    a {
+      margin-left: 15px;
+      color: white;
+
+      svg {
+        height: 1.5em;
+        width: auto;
+      }
+    }
+    
+    a:hover {
+      opacity: 0.7;
+    }
+  }
+}
