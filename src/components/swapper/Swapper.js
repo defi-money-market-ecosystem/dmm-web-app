@@ -72,6 +72,8 @@ class Swapper extends React.Component {
             updateUnderlying={(newToken) => this.props.updateUnderlying(newToken)}
             updateValue={(val) => this.props.updateValue(val)}
             setIsMinting={(val) => this.props.setIsMinting(val)}
+            activeSupply={this.props.activeSupply}
+            totalSupply={this.props.totalSupply}
           />
           <BalancesPanel
             daiBalance={this.props.daiBalance}

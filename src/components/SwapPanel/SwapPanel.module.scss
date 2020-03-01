@@ -244,6 +244,30 @@ button:focus {
   padding: 0 5%;
 }
 
+.supplyWrapper {
+  width: 40%;
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 100;
+  text-align: left;
+  float: left;
+}
+
+.supply {
+  line-height: 18px;
+  justify-content: space-between;
+  display: flex;
+}
+
+.amount {
+  font-weight: 400;
+}
+
+.gray {
+  color: #c1c5d0;
+  font-weight: 100;
+}
+
 .submitButton {
   color: white !important;
   background-color: #327ccb !important;

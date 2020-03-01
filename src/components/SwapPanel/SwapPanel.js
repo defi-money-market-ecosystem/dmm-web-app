@@ -333,6 +333,18 @@ class SwapPanel extends React.Component {
             </div>*/}
           </div>
           <div className={styles.submit}>
+            { this.props.dmmToken ? (
+              <div className={styles.supplyWrapper}>
+                <div className={`${styles.supply} ${styles.active}`}>
+                  <div className={styles.name}>Active supply:</div><div className={styles.amount}>{ ''+SwapPanel.numberWithCommas(parseFloat(humanize(this.props.activeSupply, this.props.dmmToken.decimals, 4)).toFixed(0)) } <span className={styles.gray}>{ this.props.dmmToken.name }</span></div>
+                </div>
+                <div className={`${styles.supply} ${styles.total}`}>
+                  <div className={styles.name}>Total supply:</div><div className={styles.amount}>{ ''+SwapPanel.numberWithCommas(humanize(this.props.totalSupply, this.props.dmmToken.decimals, 2)) } <span className={styles.gray}>{ this.props.dmmToken.name }</span></div>
+                </div>
+              </div>
+            ) : (
+              <div/>
+            )}
             { this.props.isWaitingForSignature ? (
               allowance.eq(NumberUtil._0) ? (
                 <Tooltip title={'Awaiting signature from wallet'}>
