@@ -98,7 +98,7 @@ class Swapper extends React.Component {
               { this.props.isLoading ? (
                 <CircularProgress className={styles.progressBar} color={"inherit"}/>
               ) : (
-                <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} onClick={() => this.props.loadWallet()}>
+                <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} disabled={isWalletLoaded} onClick={() => this.props.loadWallet()}>
                   {isWalletLoaded ? (
                     "Wallet Loaded"
                   ) : "Connect Your Wallet"}

@@ -118,3 +118,171 @@
 .bold {
   font-weight: 500;
 }
+
+@media (max-width: 1200px) {
+  .totalStat {
+    border-right-width: 5px;
+  }
+
+  .bigNum {
+    font-size: 5em;
+  }
+
+  .statSubtitle {
+    font-size: 1.3em;
+  }
+
+  .rightStat {
+    padding-top: 25px;
+  }
+
+  .aprWrapper {
+    font-size: 2.3em;
+  }
+
+  .daiInterestRate {
+    font-size: 0.9em;
+    line-height: 1.4em;
+  }
+}
+
+@media (max-width: 1000px) {
+  .totalStat {
+    border-right-width: 5px;
+  }
+
+  .bigNum {
+    font-size: 4.4em;
+  }
+
+  .statSubtitle {
+    font-size: 1.1em;
+  }
+
+  .rightStat {
+    padding-top: 25px;
+  }
+
+  .aprWrapper {
+    font-size: 2.1em;
+    margin-bottom: -3px;
+  }
+
+  .daiInterestRate {
+    font-size: 0.9em;
+    line-height: 1.4em;
+  }
+}
+
+@media (max-width: 900px) {
+  .content {
+    height: 880px;
+  }
+}
+
+@media (max-width: 850px) {
+  .totalStat {
+    border-right-width: 4px;
+  }
+
+  .bigNum {
+    font-size: 3.6em;
+  }
+
+  .statSubtitle {
+    font-size: 1em;
+  }
+
+  .rightStat {
+    padding-top: 23px;
+  }
+
+  .aprWrapper {
+    font-size: 1.9em;
+    margin-bottom: -5px;
+  }
+
+  .daiInterestRate {
+    font-size: 0.8em;
+    line-height: 1.4em;
+  }
+}
+
+@media (max-width: 700px) {
+  .content {
+    height: 820px;
+  }
+
+  .totalStat {
+    border-right-width: 4px;
+  }
+
+  .bigNum {
+    font-size: 3.3em;
+  }
+
+  .statSubtitle {
+    font-size: 1em;
+  }
+
+  .rightStat {
+    padding-top: 25px;
+  }
+
+  .aprWrapper {
+    font-size: 1.6em;
+  }
+
+  .daiInterestRate {
+    font-size: 0.8em;
+    line-height: 1.3em;
+  }
+}
+
+@media (max-width: 550px) {
+  .content {
+    height: 1070px;
+  }
+
+  .leftStats {
+    width: 100%;
+    padding-top: 10px;
+  }
+
+  .totalStat {
+    border: none;
+    width: 100%;
+    text-align: center;
+    padding: 0 15px;
+  }
+
+  .bigNum {
+    font-size: 16vw;
+    font-weight: 400;
+  }
+
+  .statSubtitle {
+    font-size: 0.9em;
+    font-weight: 100;
+    margin-top: 5px;
+  }
+
+  .rightStat {
+    width: 100%;
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: center;
+  }
+
+  .aprWrapper {
+    font-weight: 100;
+    font-size: 2em;
+    line-height: 1.65em;
+    margin-bottom: 10px;
+  }
+
+  .usdToDmm {
+    text-align: center;
+  }
+}

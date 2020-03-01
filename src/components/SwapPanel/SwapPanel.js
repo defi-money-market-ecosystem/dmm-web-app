@@ -14,6 +14,7 @@ import {humanize} from "../../utils/NumberUtil";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import ArrowForward from '@material-ui/icons/ArrowForward';
+import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
 import styles from './SwapPanel.module.scss';
 import NumberUtil, {fromDecimalToBN} from "../../utils/NumberUtil";
@@ -299,7 +300,12 @@ class SwapPanel extends React.Component {
                 </div>
               </div>
               <div className={styles.arrow}>
-                <ArrowForward/>
+                <div className={styles.rightArrow}>
+                  <ArrowForward/>
+                </div>
+                <div className={styles.downArrow}>
+                  <ArrowDownward/>
+                </div>
               </div>
               <div className={styles.dmmSection}>
                 <div className={styles.maxBalance} onClick={() => this.props.isMinting ? this.maxUnderlying() : this.maxDmm()}>

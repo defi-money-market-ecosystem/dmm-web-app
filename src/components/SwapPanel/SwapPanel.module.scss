@@ -2,7 +2,7 @@
 .SwapPanel {
   width: 46%;
   margin: 2%;
-  height: 250px;
+  /*height: 250px;*/
   display: inline-block;
   box-shadow: rgba(0,0,0,0.5) 1px 1px 8px -4px, rgba(0,0,0,0.5) 1px 1px 4px -4px;
   -webkit-border-radius: 5px;
@@ -16,7 +16,8 @@
   -ms-transition: opacity 0.5s ease-in-out;
   -o-transition: opacity 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
-  padding: 13px 0;
+  height: fit-content;
+  padding: 13px 0 20px;
 }
 
 .SwapPanel.disabled {
@@ -58,6 +59,7 @@
   font-weight: 100;
   font-size: 0.8em;
   margin-top: 5px;
+  padding: 0 5%;
 }
 
 .inputForm {
@@ -77,6 +79,10 @@
   display: inline-block;
   vertical-align: top;
   margin-top: 24px;
+}
+
+.downArrow {
+  display: none;
 }
 
 .maxBalance {
@@ -119,7 +125,8 @@
   background: none;
   font-size: 1em;
   margin: 0;
-  width: 60%;
+  width: calc(100% - 100px);
+  float: left;
   display: inline-block;
   vertical-align: top;
   padding: 10px 0 10px 15px;
@@ -131,12 +138,17 @@
 }
 
 .inputWrapper input.dmmInput {
-  width: 57%;
+  width: calc(100% - 100px);
+  float: left;
+}
+
+.dmmSection .inputWrapper input {
+  width: calc(100% - 80px);
 }
 
 .underlyingSelector {
-  width: 40%;
   display: inline-block;
+  float: right;
   font-weight: 100;
   vertical-align: top;
   -webkit-transition: all 0.2s ease-in-out;
@@ -150,10 +162,10 @@
   border-bottom-right-radius: 4px;
   border-top-right-radius: 4px;
   overflow: hidden;
+  width: 100px;
 }
 
 .underlyingSelector.dmmUnderlying {
-  width: 43%;
 }
 
 .underlyingSelector:hover {
@@ -204,8 +216,9 @@
 .dmmSection .asset {
   visibility: visible;
   font-weight: 100;
-  width: 35%;
-  margin-left: 5%;
+  width: 80px;
+  float: right;
+  /*margin-left: 5%;*/
 }
 
 .underlyingSelector svg {
@@ -251,6 +264,7 @@ button:focus {
   font-weight: 100;
   text-align: left;
   float: left;
+  min-width: 200px;
 }
 
 .supply {
@@ -300,4 +314,44 @@ button:focus {
   width: 20px !important;
   height: 20px !important;
   margin-right: 10px;
+}
+
+@media (max-width: 900px) {
+  .SwapPanel {
+    width: 80%;
+  }
+}
+
+@media (max-width: 700px) {
+  .SwapPanel {
+    width: 90%;
+  }
+}
+
+@media (max-width: 550px) {
+  .SwapPanel {
+    width: 95%;
+  }
+
+  .underlyingSection,
+  .dmmSection {
+    width: 100%;
+  }
+
+  .rightArrow {
+    display: none;
+  }
+
+  .downArrow {
+    display: block;
+  }
+
+  .supplyWrapper {
+    width: 100%;
+  }
+
+  .submitButton {
+    width: 100% !important;
+    margin-top: 20px !important;
+  }
 }

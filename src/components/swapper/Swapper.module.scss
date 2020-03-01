@@ -100,3 +100,20 @@
   line-height: 13px;
   vertical-align: top;
 }
+
+@media (max-width: 900px) {
+  .swapperWrapper {
+    margin-top: -660px !important;
+  }
+
+  .connectWalletButton {
+    margin: 20px auto;
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 550px) {
+  .swapperWrapper {
+    margin-top: -810px !important;
+  }
+}

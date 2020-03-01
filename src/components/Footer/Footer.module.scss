@@ -38,6 +38,10 @@
       margin: 0 auto -50px;
     }
 
+    .socialWrapper {
+      padding-right: 2%;
+    }
+
     a {
       margin-left: 15px;
       color: white;
@@ -50,6 +54,51 @@
     
     a:hover {
       opacity: 0.7;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .Footer {
+    position: relative;
+    margin-top: -50px;
+  }
+
+  .copyright {
+    float: left;
+    margin-top: -20px;
+    margin-left: 15px;
+  }
+}
+
+@media (max-width: 900px) {
+  .Footer {
+    .content {
+      .copyright {
+        width: 100%;
+        text-align: center;
+        margin: 0 0 -120px;
+        float: none;
+      }
+
+      .contractAddress {
+        width: 100%;
+        text-align: center;
+        margin-top: -70px;
+        margin-bottom: -5px;
+        float: none;
+      }
+
+      .contractAddress a {
+        margin: 0;
+      }
+
+      .socialWrapper {
+        width: 100%;
+        text-align: center;
+        margin-top: 0;
+        float: none;
+      }
     }
   }
 }
