@@ -101,9 +101,7 @@ class App extends React.Component {
         })
         .then(async () => {
           const underlyingAllowance = await this.getAllowance(underlyingToken);
-          const dmmAllowance = await this.getAllowance(dmmToken);
           this.setState({
-            dmmAllowance,
             isWaitingForApprovalToMine: false,
             underlyingAllowance,
           });
