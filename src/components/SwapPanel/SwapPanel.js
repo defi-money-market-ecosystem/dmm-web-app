@@ -311,7 +311,7 @@ class SwapPanel extends React.Component {
 
     const actionButtonHelperTooltip = this.props.isWaitingForSignature ?
       'Awaiting signature from wallet' :
-      this.props.isWaitingForApprovalToMine ? `Your tokens are unlocking. After being unlocked, they can be used to mint ${this.dmmToken.symbol}`
+      this.props.isWaitingForApprovalToMine ? `Your tokens are unlocking. After being unlocked, they can be used to mint ${this.props.dmmToken.symbol}`
         : '';
 
     return (
