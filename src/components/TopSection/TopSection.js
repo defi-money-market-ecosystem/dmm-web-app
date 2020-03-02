@@ -1,20 +1,11 @@
 import React from 'react';
 import CountUp from 'react-countup';
 import NumberUtil, {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
-import {USDC, DAI} from "../../models/Tokens";
+import {DAI} from "../../models/Tokens";
 
 import styles from './TopSection.module.scss';
 
 class TopSection extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  static numberWithCommas(x) {
-    const parts = x.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return parts.join(".");
-  }
 
   render() {
     return (
@@ -26,10 +17,10 @@ class TopSection extends React.Component {
           <div className={styles.leftStats}>
             <div className={styles.totalStat}>
               <div className={styles.bigNum}>
-                { TopSection.numberWithCommas(humanize(this.props.totalActive, DAI.decimals, 0)) }
+                {humanize(this.props.totalActive, DAI.decimals, 0, true)}
               </div>
               <div className={styles.statSubtitle}>
-                DMM Tokens Purchased
+                mTokens Purchased
               </div>
             </div>
           </div>
@@ -40,32 +31,36 @@ class TopSection extends React.Component {
             </div>
             <div className={styles.usdToDmm}>
               <div className={styles.daiInterestRate}>
-                <span className={styles.bold}>1 </span><span className={styles.light}>mDAI/mUSDC = </span>
+                <span className={styles.bold}>1</span>
+                <span className={styles.light}>&nbsp;mDAI or mUSDC =&nbsp;</span>
                 <CountUp
-                  start={this.props.exchangeRate ? humanize(NumberUtil._1.mul(this.props.exchangeRate).div(NumberUtil._1),18) : 0}
-                  end={this.props.exchangeRate ? humanize(NumberUtil._1.mul(this.props.exchangeRate).div(NumberUtil._1).add(fromDecimalToBN(0.000007134703196,18)),18) : 0}
+                  start={this.props.exchangeRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.exchangeRate).div(NumberUtil._1),18)) : 0}
+                  end={this.props.exchangeRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.exchangeRate).div(NumberUtil._1).add(fromDecimalToBN(0.000007134703196,18)),18)) : 0}
                   duration={60 * 60}
                   separator=" "
                   decimals={8}
                   decimal="."
                   prefix=""
                   suffix=""
-                /><span className={styles.light}> DAI</span><span className={styles.small}>/</span><span className={styles.light}>USDC</span>
+                />
+                <span className={styles.light}>&nbsp;DAI or USDC</span>
               </div>
             </div>
             <div className={styles.usdToDmm}>
               <div className={styles.daiInterestRate}>
-                <span className={styles.bold}>1</span><span className={styles.light}> DAI</span><span className={styles.small}>/</span><span className={styles.light}>USDC = </span>
+                <span className={styles.bold}>1</span>
+                <span className={styles.light}>&nbsp;DAI or USDC =&nbsp;</span>
                 <CountUp
-                  start={this.props.exchangeRate ? humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.exchangeRate),18) : 0}
-                  end={this.props.exchangeRate ? humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.exchangeRate).sub(fromDecimalToBN(0.000006715014772,18)),18) : 0}
+                  start={this.props.exchangeRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.exchangeRate),18)) : 0}
+                  end={this.props.exchangeRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.exchangeRate).sub(fromDecimalToBN(0.000006715014772,18)),18)) : 0}
                   duration={60 * 60}
                   separator=" "
                   decimals={8}
                   decimal="."
                   prefix=""
                   suffix=""
-                /><span className={styles.light}> mDAI/mUSDC</span>
+                />
+                <span className={styles.light}>&nbsp;mDAI or mUSDC</span>
               </div>
             </div>
           </div>

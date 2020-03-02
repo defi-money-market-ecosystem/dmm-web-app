@@ -11,7 +11,7 @@ export const MAX_UINT256 = new BN('2').pow(new BN('256')).sub(new BN('1'));
 export const MAX_INT256 = new BN('2').pow(new BN('255')).sub(new BN('1'));
 export const MIN_INT256 = new BN('2').pow(new BN('255')).mul(new BN('-1'));
 
-export const humanize = (bn, bnPrecision, targetPrecision) => {
+export const humanize = (bn, bnPrecision, targetPrecision, format) => {
   if (typeof bn === 'number') {
     bn = new BN(bn);
   } else if (typeof bn === 'string') {
@@ -22,16 +22,42 @@ export const humanize = (bn, bnPrecision, targetPrecision) => {
     targetPrecision = humanPrecision;
   }
 
-  if (!bnPrecision) {
+  if (!bnPrecision && bnPrecision !== 0) {
     bnPrecision = 18;
   }
   const truncationAmount = Math.max(bnPrecision - targetPrecision, 0);
   if (truncationAmount === 0) {
-    return Web3.utils.fromWei(bn.mul(new BN(_10).pow(new BN(18 - bnPrecision))));
+    if (bnPrecision <= 18) {
+      return Web3.utils.fromWei(bn.mul(new BN(_10).pow(new BN(18 - bnPrecision))));
+    } else {
+      return Web3.utils.fromWei(bn.div(new BN(_10).pow(new BN(bnPrecision - 18))));
+    }
   }
 
   const baseRate = new BN(_10).pow(new BN(bnPrecision - targetPrecision));
-  return Web3.utils.fromWei(bn.div(baseRate).mul(baseRate));
+  let neededPower;
+  if (bnPrecision === 18) {
+    neededPower = new BN(1);
+  } else if (bnPrecision < 18) {
+    neededPower = new BN(10).pow(new BN(18 - bnPrecision))
+  } else /* bnPrecision > 18 */ {
+    neededPower = new BN(10).pow(new BN(bnPrecision - 18))
+  }
+
+  const truncatedNumber = bn.div(baseRate).mul(baseRate);
+
+  let decimalString;
+  if (bnPrecision > 18) {
+    decimalString = Web3.utils.fromWei(truncatedNumber.div(neededPower));
+  } else {
+    decimalString = Web3.utils.fromWei(truncatedNumber.mul(neededPower));
+  }
+
+  if (format) {
+    return parseFloat(decimalString).toLocaleString("en-US", {maximumFractionDigits: targetPrecision});
+  } else {
+    return decimalString
+  }
 };
 
 export const fromDecimalToBN = (value, bnPrecision) => {
@@ -47,6 +73,7 @@ export const fromDecimalToBN = (value, bnPrecision) => {
   }
 };
 
+// eslint-disable-next-line
 Number.prototype.countDecimals = function () {
   if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
   const string = this.toString();
