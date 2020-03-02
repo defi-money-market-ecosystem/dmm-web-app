@@ -4,6 +4,7 @@ import {USDC, DAI} from "../../models/Tokens";
 
 import styles from "./BalancesPanel.module.scss";
 import NumberUtil from "../../utils/NumberUtil";
+import {CircularProgress} from "@material-ui/core";
 
 class BalancesPanel extends React.Component {
 
@@ -21,7 +22,10 @@ class BalancesPanel extends React.Component {
       return '0';
     }
 
-    return parseFloat(humanize(bnValue, mAsset.decimals, 0)).toLocaleString("en-US", {minimumFractionDigits: 0, maximumFractionDigits: 0})
+    return parseFloat(humanize(bnValue, mAsset.decimals, 0)).toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    })
   };
 
   /* TODO - Add US dollar value of assets (specifically m assets, but with ETH it'll also be useful). Will become more useful as the value of m assets and the underlying assets diverge. Can also have a dropdown in the upper right with a choice of currency. */
@@ -53,7 +57,7 @@ class BalancesPanel extends React.Component {
             <div className={styles.amount}>
               {mBalance ? parseFloat(humanize(mBalance, underlyingAsset.decimals)).toLocaleString("en-US", {minimumFractionDigits: decimals}) : 0}
               <span className={styles.underlyingValue}>
-                &nbsp;({ mAsset ? this.mAssetToDollarValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
+                &nbsp;({mAsset ? this.mAssetToDollarValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
               </span>
             </div>
           </div>
@@ -65,6 +69,7 @@ class BalancesPanel extends React.Component {
       <div className={`${styles.BalancesPanel} ${this.props.disabled && styles.disabled}`}>
         <div className={styles.title}>
           Balances
+          {this.props.isLoading ? (<CircularProgress className={styles.balanceLoadingProgress}/>) : (<span/>)}
         </div>
         <div className={styles.bottomBorder}/>
         <div className={styles.titleRow}>

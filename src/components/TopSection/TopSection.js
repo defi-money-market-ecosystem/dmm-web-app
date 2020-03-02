@@ -2,7 +2,6 @@ import React from 'react';
 import CountUp from 'react-countup';
 import NumberUtil, {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
 import {DAI} from "../../models/Tokens";
-import ArrowForward from '@material-ui/icons/ArrowForward';
 
 import styles from './TopSection.module.scss';
 
@@ -18,7 +17,7 @@ class TopSection extends React.Component {
           <div className={styles.leftStats}>
             <div className={styles.totalStat}>
               <div className={styles.bigNum}>
-                {humanize(this.props.totalActive, DAI.decimals, 0, true)}
+                {humanize(this.props.totalActiveSupply, DAI.decimals, 0, true)}
               </div>
               <div className={styles.statSubtitle}>
                 mTokens Purchased

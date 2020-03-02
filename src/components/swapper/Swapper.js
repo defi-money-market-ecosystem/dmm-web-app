@@ -53,6 +53,7 @@ class Swapper extends React.Component {
           mDaiExchangeRate={this.props.mDaiExchangeRate}
           mUsdcExchangeRate={this.props.mUsdcExchangeRate}
           disabled={!isWalletLoaded}
+          isLoading={this.props.isLoadingBalances}
         />
       </>
     );
