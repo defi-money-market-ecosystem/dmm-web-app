@@ -25,14 +25,14 @@ export const humanize = (bn, bnPrecision, targetPrecision, format) => {
   if (!bnPrecision && bnPrecision !== 0) {
     bnPrecision = 18;
   }
-  const truncationAmount = Math.max(bnPrecision - targetPrecision, 0);
-  if (truncationAmount === 0) {
-    if (bnPrecision <= 18) {
-      return Web3.utils.fromWei(bn.mul(new BN(_10).pow(new BN(18 - bnPrecision))));
-    } else {
-      return Web3.utils.fromWei(bn.div(new BN(_10).pow(new BN(bnPrecision - 18))));
-    }
-  }
+  // const truncationAmount = Math.max(bnPrecision - targetPrecision, 0);
+  // if (truncationAmount === 0) {
+  //   if (bnPrecision <= 18) {
+  //     return Web3.utils.fromWei(bn.mul(new BN(_10).pow(new BN(18 - bnPrecision))));
+  //   } else {
+  //     return Web3.utils.fromWei(bn.div(new BN(_10).pow(new BN(bnPrecision - 18))));
+  //   }
+  // }
 
   const baseRate = new BN(_10).pow(new BN(bnPrecision - targetPrecision));
   let neededPower;
@@ -54,7 +54,10 @@ export const humanize = (bn, bnPrecision, targetPrecision, format) => {
   }
 
   if (format) {
-    return parseFloat(decimalString).toLocaleString("en-US", {maximumFractionDigits: targetPrecision});
+    return parseFloat(decimalString).toLocaleString("en-US", {
+      maximumFractionDigits: targetPrecision,
+      useGrouping: true,
+    });
   } else {
     return decimalString
   }

@@ -50,9 +50,10 @@ class SwapPanel extends React.Component {
       underlyingAmount: NumberUtil._0,
       dmmValue: '0',
       dmmAmount: NumberUtil._0,
-      isInitialLoad: false,
+      isInitialLoad: true,
+      inputError: null,
     });
-    this.onInputAmountChange(humanize(NumberUtil._0));
+    // this.onInputAmountChange(humanize(NumberUtil._0));
   };
 
   underlyingTokenDecimals = () => this.props.underlyingToken.decimals;
@@ -69,6 +70,7 @@ class SwapPanel extends React.Component {
     const newFormattedAmount = isInvalid || newAmount.includes('.') ?
       newAmount :
       humanize(fromDecimalToBN(newAmount, decimals), decimals, undefined, true);
+    console.log("newAmount ", newAmount, fromDecimalToBN(newAmount, decimals).toString(), humanize(fromDecimalToBN(newAmount, decimals), decimals, undefined, true), newFormattedAmount, isInvalid, newAmount.includes('.'));
 
     return {newAmount, newFormattedAmount, isInvalid}
   }
