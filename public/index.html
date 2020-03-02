@@ -17,7 +17,7 @@
     <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon-16x16.png" sizes="16x16" />
 
     <!-- Primary Meta Tags -->
-    <title>DMM Ecosystem</title>
+    <title>DMM Swap</title>
     <meta name="title" content="DMM Swap">
     <meta name="description" content="Swap your crypto for mAssets to earn consistent interest backed by real-world, revenue-producing assets.">
 
@@ -26,7 +26,7 @@
     <meta property="og:url" content="https://app.defimoneymarket.com/">
     <meta property="og:title" content="DMM Swap">
     <meta property="og:description" content="Swap your crypto for mAssets to earn consistent interest backed by real-world, revenue-producing assets.">
-    <meta property="og:image" content="%PUBLIC_URL%/meta-image-flat.png">
+    <meta property="og:image" content="https://www.defimoneymarket.com/meta-image-flat.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -67,28 +67,4 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
-  <script src="/assets/vendor/jquery/jquery.min.js"></script>
-  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    $(document).ready(function() {
-      $.getJSON("https://exchange-api.dolomite.io/v1/compliance/geolocation", function(response) {
-        if(response.data.country_code !== 'CN'){
-          let d = document;
-          let h = d.getElementsByTagName('head')[0];
-          let s = d.createElement('script');
-          s.type = 'text/javascript';
-          s.async = true;
-          s.src = 'https://www.googletagmanager.com/gtag/js?id=UA-122232197-1';
-          h.appendChild(s);
-
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'UA-122232197-1');
-        }
-      }, "jsonp");
-    });
-  </script>
 </html>
