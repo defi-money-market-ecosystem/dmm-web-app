@@ -68,10 +68,10 @@
   margin: 20px auto 20px;
 }
 
-.inputFormWrapper {
+/*.inputFormWrapper {
   display: flex;
   flex-direction: row;
-}
+}*/
 
 .underlyingSection,
 .dmmSection {
@@ -79,6 +79,10 @@
   display: inline-block;
   vertical-align: top;
   align-self: flex-end;
+}
+
+.dmmSection {
+  margin-top: 16px;
 }
 
 .arrow {
@@ -375,15 +379,15 @@ button:focus {
   }
 }
 
-.inputRightSide {
+/*.inputRightSide {
   align-self: flex-end;
-}
+}*/
 
 .errorSection {
   color: $pink;
   font-size: 12px;
-  padding: 0 42px 8px;
-  margin-top: -16px;
+  padding: 0 5% 8px;
+  margin-top: -8px;
   text-align: left;
   width: 87%;
 }

@@ -29,6 +29,8 @@ class App extends React.Component {
     this.state = {
       underlyingAllowance: NumberUtil._0,
       exchangeRate: null,
+      mDaiExchangeRate: null,
+      mUsdcExchangeRate: null,
       dmmAllowance: NumberUtil._0,
       underlyingBalance: NumberUtil._0,
       dmmBalance: NumberUtil._0,
@@ -213,12 +215,16 @@ class App extends React.Component {
       const underlyingToDmmTokensMap = await DmmTokenService.getDmmTokens();
       const dmmToken = underlyingToDmmTokensMap[this.state.underlyingToken.address.toLowerCase()];
       const exchangeRate = await DmmTokenService.getExchangeRate(dmmToken.dmmTokenId);
+      const mDaiExchangeRate = await DmmTokenService.getExchangeRate(underlyingToDmmTokensMap[DAI.address.toLowerCase()].dmmTokenId);
+      const mUsdcExchangeRate = await DmmTokenService.getExchangeRate(underlyingToDmmTokensMap[USDC.address.toLowerCase()].dmmTokenId);
       const activeSupply = await DmmTokenService.getActiveSupply(dmmToken);
       const totalSupply = await DmmTokenService.getTotalSupply(dmmToken);
       const mDaiActive = await DmmTokenService.getActiveSupply(underlyingToDmmTokensMap[DAI.address.toLowerCase()]);
       const mUsdcActive = await DmmTokenService.getActiveSupply(underlyingToDmmTokensMap[USDC.address.toLowerCase()]);
       this.setState({
         exchangeRate,
+        mDaiExchangeRate,
+        mUsdcExchangeRate,
         activeSupply,
         totalSupply,
         totalActive: mDaiActive.add(mUsdcActive)
@@ -300,7 +306,8 @@ class App extends React.Component {
       <>
         <DmmToolbar/>
         <TopSection
-          exchangeRate={this.state.exchangeRate}
+          daiRate={this.state.mDaiExchangeRate}
+          usdcRate={this.state.mUsdcExchangeRate}
           totalActive={this.state.totalActive}
         />
         <div className={styles.App}>

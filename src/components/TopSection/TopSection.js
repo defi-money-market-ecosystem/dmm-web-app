@@ -2,6 +2,7 @@ import React from 'react';
 import CountUp from 'react-countup';
 import NumberUtil, {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
 import {DAI} from "../../models/Tokens";
+import ArrowForward from '@material-ui/icons/ArrowForward';
 
 import styles from './TopSection.module.scss';
 
@@ -29,38 +30,76 @@ class TopSection extends React.Component {
             <div className={styles.aprWrapper}>
               Earning 6.25% APR
             </div>
-            <div className={styles.usdToDmm}>
-              <div className={styles.daiInterestRate}>
-                <span className={styles.bold}>1</span>
-                <span className={styles.light}>&nbsp;mDAI or mUSDC =&nbsp;</span>
-                <CountUp
-                  start={this.props.exchangeRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.exchangeRate).div(NumberUtil._1),18)) : 0}
-                  end={this.props.exchangeRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.exchangeRate).div(NumberUtil._1).add(fromDecimalToBN(0.000007134703196,18)),18)) : 0}
-                  duration={60 * 60}
-                  separator=" "
-                  decimals={8}
-                  decimal="."
-                  prefix=""
-                  suffix=""
-                />
-                <span className={styles.light}>&nbsp;DAI or USDC</span>
+            <div className={styles.daiSection}>
+              <div className={styles.usdToDmm}>
+                <div className={styles.daiInterestRate}>
+                  <span className={styles.bold}>1</span>
+                  <span className={styles.light}>&nbsp;mDAI =&nbsp;</span>
+                  <CountUp
+                    start={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.daiRate).div(NumberUtil._1),18)) : 0}
+                    end={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.daiRate).div(NumberUtil._1).add(fromDecimalToBN(0.000007134703196,18)),18)) : 0}
+                    duration={60 * 60}
+                    separator=" "
+                    decimals={8}
+                    decimal="."
+                    prefix=""
+                    suffix=""
+                  />
+                  <span className={styles.light}>&nbsp;DAI</span>
+                </div>
+              </div>
+              <div className={styles.usdToDmm}>
+                <div className={styles.daiInterestRate}>
+                  <span className={styles.bold}>1</span>
+                  <span className={styles.light}>&nbsp;DAI =&nbsp;</span>
+                  <CountUp
+                    start={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.daiRate),18)) : 0}
+                    end={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.daiRate).sub(fromDecimalToBN(0.000006715014772,18)),18)) : 0}
+                    duration={60 * 60}
+                    separator=" "
+                    decimals={8}
+                    decimal="."
+                    prefix=""
+                    suffix=""
+                  />
+                  <span className={styles.light}>&nbsp;mDAI</span>
+                </div>
               </div>
             </div>
-            <div className={styles.usdToDmm}>
-              <div className={styles.daiInterestRate}>
-                <span className={styles.bold}>1</span>
-                <span className={styles.light}>&nbsp;DAI or USDC =&nbsp;</span>
-                <CountUp
-                  start={this.props.exchangeRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.exchangeRate),18)) : 0}
-                  end={this.props.exchangeRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.exchangeRate).sub(fromDecimalToBN(0.000006715014772,18)),18)) : 0}
-                  duration={60 * 60}
-                  separator=" "
-                  decimals={8}
-                  decimal="."
-                  prefix=""
-                  suffix=""
-                />
-                <span className={styles.light}>&nbsp;mDAI or mUSDC</span>
+            <div className={styles.usdcSection}>
+              <div className={styles.usdToDmm}>
+                <div className={styles.daiInterestRate}>
+                  <span className={styles.bold}>1</span>
+                  <span className={styles.light}>&nbsp;mUSDC =&nbsp;</span>
+                  <CountUp
+                    start={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.usdcRate).div(NumberUtil._1),18)) : 0}
+                    end={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.usdcRate).div(NumberUtil._1).add(fromDecimalToBN(0.000007134703196,18)),18)) : 0}
+                    duration={60 * 60}
+                    separator=" "
+                    decimals={8}
+                    decimal="."
+                    prefix=""
+                    suffix=""
+                  />
+                  <span className={styles.light}>&nbsp;USDC</span>
+                </div>
+              </div>
+              <div className={styles.usdToDmm}>
+                <div className={styles.daiInterestRate}>
+                  <span className={styles.bold}>1</span>
+                  <span className={styles.light}>&nbsp;USDC =&nbsp;</span>
+                  <CountUp
+                    start={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.usdcRate),18)) : 0}
+                    end={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.usdcRate).sub(fromDecimalToBN(0.000006715014772,18)),18)) : 0}
+                    duration={60 * 60}
+                    separator=" "
+                    decimals={8}
+                    decimal="."
+                    prefix=""
+                    suffix=""
+                  />
+                  <span className={styles.light}>&nbsp;mUSDC</span>
+                </div>
               </div>
             </div>
           </div>

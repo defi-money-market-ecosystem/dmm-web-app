@@ -112,6 +112,26 @@
   /*animation:         fadeAnimation 8s infinite; /* IE 10+, Fx 29+ */
 }
 
+.daiSection {
+  -webkit-animation: fadeAnimation 16s infinite; /* Safari 4+ */
+  -moz-animation:    fadeAnimation 16s infinite; /* Fx 4+ */
+  -o-animation:      fadeAnimation 16s infinite; /* Opera 12+ */
+  animation:         fadeAnimation 16s infinite; /* IE 10+, Fx 29+ */
+}
+
+.usdcSection {
+  margin-top: -52px;
+  opacity: 0;
+  -webkit-animation: fadeAnimation 16s 8s infinite; /* Safari 4+ */
+  -moz-animation:    fadeAnimation 16s 8s infinite; /* Fx 5+ */
+  -o-animation:      fadeAnimation 16s 8s infinite; /* Opera 12+ */
+  animation:         fadeAnimation 16s 8s infinite; /* IE 10+, Fx 29+ */
+}
+
+.arrow {
+  margin-bottom: -6px;
+}
+
 .light {
   font-weight: 100;
 }
@@ -144,6 +164,10 @@
   .daiInterestRate {
     font-size: 0.9em;
     line-height: 1.4em;
+  }
+
+  .usdcSection {
+    margin-top: -44px;
   }
 }
 
@@ -207,6 +231,10 @@
     font-size: 0.8em;
     line-height: 1.4em;
   }
+
+  .usdcSection {
+    margin-top: -40px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -237,6 +265,10 @@
   .daiInterestRate {
     font-size: 0.8em;
     line-height: 1.3em;
+  }
+
+  .usdcSection {
+    margin-top: -36px;
   }
 }
 
