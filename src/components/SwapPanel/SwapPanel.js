@@ -170,7 +170,7 @@ class SwapPanel extends React.Component {
     const maxDecimals = Math.min(underlyingToken.decimals, 8);
     if (value <= 0) {
       this.setState({
-        inputError: "Must be greater than 0"
+        isInitialLoad: true//inputError: "Must be greater than 0"
       });
     } else if (value.toString().includes("e+")) {
       this.setState({
