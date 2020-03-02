@@ -1,32 +1,65 @@
 import * as React from "react";
-import {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
+import {humanize} from "../../utils/NumberUtil";
 import {USDC, DAI} from "../../models/Tokens";
 
 import styles from "./BalancesPanel.module.scss";
-import SwapPanel from "../SwapPanel/SwapPanel";
 import NumberUtil from "../../utils/NumberUtil";
 
 class BalancesPanel extends React.Component {
-  constructor(props) {
-    super(props);
 
-  }
+  mAssetToDollarValueAndLocalize = (mAsset, amountBN) => {
+    // For right now, just return the mAsset to exchange rate value. In the future, like with mETH, we'll need to
+    // convert ETH to dollars.
 
-  static numberWithCommas(x) {
-    const parts = x.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return parts.join(".");
-  }
+    let bnValue;
+    if (mAsset.symbol === this.props.mDaiToken.symbol) {
+      bnValue = amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1);
+    } else if (mAsset.symbol === this.props.mUsdcToken.symbol) {
+      bnValue = amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1);
+    } else {
+      console.error("Invalid symbol, found: ", mAsset.symbol);
+      return '0';
+    }
+
+    return parseFloat(humanize(bnValue, mAsset.decimals, 0)).toLocaleString("en-US", {minimumFractionDigits: 0, maximumFractionDigits: 0})
+  };
 
   /* TODO - Add US dollar value of assets (specifically m assets, but with ETH it'll also be useful). Will become more useful as the value of m assets and the underlying assets diverge. Can also have a dropdown in the upper right with a choice of currency. */
-  render() {
-    if (this.props.musdcToken) {
-      console.log('GOT');
-      console.log(this.props.musdcBalance);
-      console.log(''+this.props.musdcBalance);
-      console.log(humanize(this.props.musdcBalance, this.props.musdcToken.decimals));
-      console.log(humanize(this.props.musdcBalance, this.props.musdcToken.decimals, 4));
-    }
+  render = () => {
+    const mAssets = [this.props.mDaiToken, this.props.mUsdcToken];
+    const underlyingAssets = [DAI, USDC];
+    const underlyingBalances = [this.props.daiBalance, this.props.usdcBalance];
+    const mBalances = [this.props.mDaiBalance, this.props.mUsdcBalance];
+
+    const assetBalancesViews = underlyingAssets.map((underlyingAsset, index) => {
+      const mAsset = mAssets[index];
+      const underlyingBalance = underlyingBalances[index];
+      const mBalance = mBalances[index];
+      const decimals = Math.min(underlyingAsset.decimals, 8);
+      return (
+        <>
+          <div className={styles.balanceRow}>
+            <div className={styles.asset}>
+              {underlyingAsset.symbol}
+            </div>
+            <div className={styles.amount}>
+              {underlyingBalance ? parseFloat(humanize(underlyingBalance, underlyingAsset.decimals)).toLocaleString("en-US", {minimumFractionDigits: decimals}) : 0}
+            </div>
+          </div>
+          <div className={styles.balanceRow}>
+            <div className={styles.asset}>
+              m{underlyingAsset.symbol}
+            </div>
+            <div className={styles.amount}>
+              {mBalance ? parseFloat(humanize(mBalance, underlyingAsset.decimals)).toLocaleString("en-US", {minimumFractionDigits: decimals}) : 0}
+              <span className={styles.underlyingValue}>
+                &nbsp;({ mAsset ? this.mAssetToDollarValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
+              </span>
+            </div>
+          </div>
+        </>
+      );
+    });
 
     return (
       <div className={`${styles.BalancesPanel} ${this.props.disabled && styles.disabled}`}>
@@ -36,38 +69,7 @@ class BalancesPanel extends React.Component {
         <div className={styles.bottomBorder}/>
         <div className={styles.titleRow}>
         </div>
-        <div className={styles.balanceRow}>
-          <div className={styles.asset}>
-            DAI
-          </div>
-          <div className={styles.amount}>
-            { this.props.underlyingToken ? BalancesPanel.numberWithCommas(parseFloat(humanize(this.props.daiBalance, DAI.decimals)).toFixed(4)) : 0/* TODO - likely want to change this to use the decmials for each token */ }
-          </div>
-        </div>
-        <div className={styles.balanceRow}>
-          <div className={styles.asset}>
-            mDAI
-          </div>
-          <div className={styles.amount}>
-            { this.props.mdaiToken ? BalancesPanel.numberWithCommas(parseFloat(humanize(this.props.mdaiBalance, this.props.mdaiToken.decimals)).toFixed(4)) : 0 } <span className={styles.underlyingValue}>({ this.props.mdaiToken ? SwapPanel.numberWithCommas(humanize(this.props.mdaiBalance.mul(this.props.exchangeRate).div(NumberUtil._1), DAI.decimals, 2)) : 0} DAI)</span>
-          </div>
-        </div>
-        <div className={styles.balanceRow}>
-          <div className={styles.asset}>
-            USDC
-          </div>
-          <div className={styles.amount}>
-            { this.props.underlyingToken ? BalancesPanel.numberWithCommas(parseFloat(humanize(this.props.usdcBalance, USDC.decimals)).toFixed(4)) : 0 }
-          </div>
-        </div>
-        <div className={styles.balanceRow}>
-          <div className={styles.asset}>
-            mUSDC
-          </div>
-          <div className={styles.amount}>
-            { this.props.musdcToken ? BalancesPanel.numberWithCommas(parseFloat(humanize(this.props.musdcBalance, this.props.musdcToken.decimals)).toFixed(4)) : 0 } <span className={styles.underlyingValue}>({ this.props.musdcToken ? SwapPanel.numberWithCommas(parseFloat(humanize(this.props.musdcBalance.mul(this.props.exchangeRate).div(NumberUtil._1), USDC.decimals)).toFixed(2)) : 0} USDC)</span>
-          </div>
-        </div>
+        {assetBalancesViews}
       </div>
     );
   };

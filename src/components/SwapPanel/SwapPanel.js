@@ -1,17 +1,11 @@
 import React from 'react';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import {CircularProgress, Paper, TextField} from "@material-ui/core";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import {CircularProgress} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {humanize} from "../../utils/NumberUtil";
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -45,99 +39,100 @@ class SwapPanel extends React.Component {
       dmmAmount: NumberUtil._0,
       inputError: null,
       lastSelected: UNDERLYING,
-      lastUnderlyingLen: 1,
-      lastDmmLen: 1,
       underlyingSelectorExpanded: false,
+      isInitialLoad: true
     }
   }
 
-  static numberWithCommas(x) {
-    const parts = x.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return parts.join(".");
-  }
-
-  updateUnderlying(e) { // TODO - get rid of leading zeros
-    let cursor = e.target.selectionStart;
-    const newAmt = e.target.value.replace(/,/g, '').replace(/^0+/, '');
-    const newFormattedAmt = SwapPanel.numberWithCommas(newAmt);
-    const regex = /^[+-]?(\d+|\.\d+|\d+\.\d+|\d+\.)$/;
-    let isInvalid = false;
-    if (Number.isNaN(newAmt) || !regex.test(newAmt)) {
-      isInvalid = true;
-    }
-    if (newFormattedAmt.length > this.state.lastUnderlyingLen) {
-      cursor = cursor + (newFormattedAmt.length - this.state.lastUnderlyingLen);
-    }
-    else {
-      cursor = cursor - (this.state.lastUnderlyingLen - newFormattedAmt.length) + 1;
-    }
-    const target = e.target;
+  resetNumericState = () => {
     this.setState({
-      underlyingValue: newFormattedAmt,
-      underlyingAmount: isInvalid ? NumberUtil._0 : fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals),
-      dmmValue: isInvalid ? '0' : SwapPanel.numberWithCommas(humanize(fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals).mul(NumberUtil._1).div(this.props.exchangeRate), this.props.underlyingToken.decimals)),
-      dmmAmount: isInvalid ? NumberUtil._0 : fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals).mul(NumberUtil._1).div(this.props.exchangeRate),
+      underlyingValue: '0',
+      underlyingAmount: NumberUtil._0,
+      dmmValue: '0',
+      dmmAmount: NumberUtil._0,
+      isInitialLoad: false,
+    });
+    this.onInputAmountChange(humanize(NumberUtil._0));
+  };
+
+  underlyingTokenDecimals = () => this.props.underlyingToken.decimals;
+
+  getNewAmountAndIsInvalid(e) {
+    let newAmount = e.target.value.replace(/,/g, '');
+    newAmount = newAmount === '' ? '0' : newAmount;
+
+    const regex = /^[+-]?(\d+|\.\d+|\d+\.\d+|\d+\.)$/;
+    const isInvalid = Number.isNaN(parseFloat(newAmount)) || !regex.test(newAmount);
+
+    const decimals = this.underlyingTokenDecimals();
+
+    const newFormattedAmount = isInvalid || newAmount.includes('.') ?
+      newAmount :
+      humanize(fromDecimalToBN(newAmount, decimals), decimals, undefined, true);
+
+    return {newAmount, newFormattedAmount, isInvalid}
+  }
+
+  updateUnderlying(e) {
+    const {newAmount, newFormattedAmount, isInvalid} = this.getNewAmountAndIsInvalid(e);
+    const decimals = this.underlyingTokenDecimals();
+    const dmmAmount = isInvalid ? NumberUtil._0 : fromDecimalToBN(parseFloat(newAmount), decimals).mul(NumberUtil._1).div(this.props.exchangeRate);
+
+    this.setState({
+      underlyingValue: newFormattedAmount,
+      underlyingAmount: isInvalid ? NumberUtil._0 : fromDecimalToBN(parseFloat(newAmount), decimals),
+      dmmValue: isInvalid ? '0' : humanize(dmmAmount, decimals, Math.min(8, decimals), true),
+      dmmAmount: isInvalid ? NumberUtil._0 : dmmAmount,
       lastSelected: UNDERLYING,
-      lastUnderlyingLen: newFormattedAmt.length,
-      lastDmmLen: SwapPanel.numberWithCommas(humanize(fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals).mul(NumberUtil._1).div(this.props.exchangeRate), this.props.underlyingToken.decimals)).length
-    }, () => {
-      target.selectionStart = cursor;
-      target.selectionEnd = cursor;
     });
 
-    !isInvalid && this.props.updateValue(this.props.isMinting ? fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals) : fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals).mul(NumberUtil._1).div(this.props.exchangeRate));
-    this.onInputAmountChange(newAmt);
+    if (!isInvalid) {
+      if (this.props.isMinting) {
+        const underlyingValue = fromDecimalToBN(parseFloat(newAmount), decimals);
+        this.props.updateValue(underlyingValue);
+      } else {
+        this.props.updateValue(dmmAmount);
+      }
+    }
+    this.onInputAmountChange(newAmount);
   }
 
   updateDmm(e) {
-    let cursor = e.target.selectionStart;
-    const newAmt = e.target.value.replace(/,/g, '').replace(/^0+/, '');
-    const newFormattedAmt = SwapPanel.numberWithCommas(newAmt);
-    const regex = /^[+-]?(\d+|\.\d+|\d+\.\d+|\d+\.)$/;
-    let isInvalid = false;
-    if (Number.isNaN(newAmt) || !regex.test(newAmt)) {
-      isInvalid = true;
-    }
-    if (newFormattedAmt.length > this.state.lastDmmLen) {
-      cursor = cursor + (newFormattedAmt.length - this.state.lastDmmLen);
-    }
-    else {
-      cursor = cursor - (this.state.lastDmmLen - newFormattedAmt.length) + 1;
-    }
-    const target = e.target;
+    const {newAmount, newFormattedAmount, isInvalid} = this.getNewAmountAndIsInvalid(e);
+    const decimals = this.underlyingTokenDecimals();
+    const underlyingValue = !isInvalid ? fromDecimalToBN(parseFloat(newAmount), decimals).mul(this.props.exchangeRate).div(NumberUtil._1) : '0';
 
     this.setState({
-      dmmValue: SwapPanel.numberWithCommas(newAmt),
-      dmmAmount: isInvalid ? NumberUtil._0 : fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals),
-      underlyingValue: isInvalid ? '0' : SwapPanel.numberWithCommas(humanize(fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals).mul(this.props.exchangeRate).div(NumberUtil._1), this.props.underlyingToken.decimals)),
-      underlyingAmount: isInvalid ? NumberUtil._0 : fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals).mul(this.props.exchangeRate).div(NumberUtil._1),
+      dmmValue: newFormattedAmount,
+      dmmAmount: isInvalid ? NumberUtil._0 : fromDecimalToBN(parseFloat(newAmount), decimals),
+      underlyingValue: isInvalid ? '0' : humanize(underlyingValue, decimals, undefined, true),
+      underlyingAmount: isInvalid ? NumberUtil._0 : underlyingValue,
       lastSelected: DMM,
-      lastDmmLen: newFormattedAmt.length,
-      LastUnderlyingLen: SwapPanel.numberWithCommas(humanize(fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals).mul(NumberUtil._1).div(this.props.exchangeRate), this.props.underlyingToken.decimals)).length
-    }, () => {
-      target.selectionStart = cursor;
-      target.selectionEnd = cursor;
     });
 
-    !isInvalid && this.props.updateValue(this.props.isMinting ? fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals).mul(this.props.exchangeRate).div(NumberUtil._1) : fromDecimalToBN(Number.parseFloat(newAmt === '' ? '0' : newAmt), this.props.underlyingToken.decimals));
-    this.onInputAmountChange(newAmt);
+    if (!isInvalid) {
+      if (this.props.isMinting) {
+        this.props.updateValue(underlyingValue);
+      } else {
+        this.props.updateValue(fromDecimalToBN(parseFloat(newAmount), decimals));
+      }
+    }
+    this.onInputAmountChange(newAmount);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.exchangeRate !== this.props.exchangeRate) {
-      if (this.state.lastSelected === UNDERLYING) {
+      if (this.props.isMinting) {
+        const dmmAmount = this.state.underlyingAmount.isZero() ? NumberUtil._0 : this.state.underlyingAmount.mul(NumberUtil._1).div(this.props.exchangeRate);
         this.setState({
-          dmmValue: !this.state.inputError && SwapPanel.numberWithCommas(humanize(this.state.underlyingAmount.mul(NumberUtil._1).div(this.props.exchangeRate), this.props.underlyingToken.decimals)),
-          dmmAmount: !this.state.inputError && this.state.underlyingAmount.mul(NumberUtil._1).div(this.props.exchangeRate),
-          lastDmmLen: !this.state.inputError && SwapPanel.numberWithCommas(humanize(this.state.underlyingAmount.mul(NumberUtil._1).div(this.props.exchangeRate), this.props.underlyingToken.decimals)),
+          dmmValue: !this.state.inputError && humanize(dmmAmount, this.underlyingTokenDecimals(), undefined, true),
+          dmmAmount: !this.state.inputError && dmmAmount,
         });
-      }
-      else {
+      } else {
+        const underlyingAmount = this.state.dmmAmount.isZero() ? NumberUtil._0 : this.state.dmmAmount.mul(this.props.exchangeRate).div(NumberUtil._1);
         this.setState({
-          underlyingValue: !this.state.inputError && SwapPanel.numberWithCommas(humanize(this.state.dmmAmount.mul(this.props.exchangeRate).div(NumberUtil._1), this.props.underlyingToken.decimals)),
-          underlyingAmount: !this.state.inputError && this.state.dmmAmount.mul(this.props.exchangeRate).div(NumberUtil._1),
-          lastUnderlyingLen: !this.state.inputError && SwapPanel.numberWithCommas(humanize(this.state.dmmAmount.mul(this.props.exchangeRate).div(NumberUtil._1), this.props.underlyingToken.decimals)),
+          underlyingValue: !this.state.inputError && humanize(underlyingAmount, this.underlyingTokenDecimals(), undefined, true),
+          underlyingAmount: !this.state.inputError && underlyingAmount,
         });
         !this.state.inputError && this.props.updateValue(this.state.dmmAmount.mul(this.props.exchangeRate).div(NumberUtil._1));
       }
@@ -145,6 +140,10 @@ class SwapPanel extends React.Component {
   }
 
   onInputAmountChange = (newVal) => {
+    this.setState({
+      isInitialLoad: false,
+    });
+
     if (newVal === "") {
       this.setState({
         inputError: undefined,
@@ -154,7 +153,7 @@ class SwapPanel extends React.Component {
       return;
     }
 
-    const value = Number.parseFloat(newVal);
+    const value = parseFloat(newVal);
     const regex = /^[+-]?(\d+|\.\d+|\d+\.\d+|\d+\.)$/;
     if (Number.isNaN(value) || !regex.test(newVal)) {
       this.setState({
@@ -163,7 +162,10 @@ class SwapPanel extends React.Component {
       return;
     }
 
+    const balance = this.props.isMinting ? this.props.underlyingBalance : this.props.dmmBalance;
+
     const underlyingToken = this.props.underlyingToken;
+    const maxDecimals = Math.min(underlyingToken.decimals, 8);
     if (value <= 0) {
       this.setState({
         inputError: "Must be greater than 0"
@@ -172,11 +174,11 @@ class SwapPanel extends React.Component {
       this.setState({
         inputError: `Number is too large`
       });
-    } else if (value.countDecimals() > underlyingToken.decimals) {
+    } else if (value.countDecimals() > maxDecimals) {
       this.setState({
-        inputError: `Must only have up to ${underlyingToken.decimals} decimals`
+        inputError: `Must only have up to ${maxDecimals} decimals`
       });
-    } else if (this.props.underlyingBalance.lt(fromDecimalToBN(value, underlyingToken.decimals))) {
+    } else if (balance.lt(fromDecimalToBN(value, underlyingToken.decimals))) {
       this.setState({
         inputError: `Insufficient balance`
       });
@@ -187,117 +189,159 @@ class SwapPanel extends React.Component {
     }
   };
 
-  maxUnderlying() {
-    const newAmt = ''+humanize(this.props.underlyingBalance, this.props.underlyingToken.decimals);
-    const newFormattedAmt = SwapPanel.numberWithCommas(newAmt);
+  onSelectMax() {
+    const underlyingAmount = this.props.isMinting ?
+      this.props.underlyingBalance :
+      this.props.dmmBalance.mul(this.props.exchangeRate).div(NumberUtil._1);
+
+    const dmmAmount = this.props.isMinting ?
+      this.props.underlyingBalance.mul(NumberUtil._1).div(this.props.exchangeRate) :
+      this.props.dmmBalance;
+
+    const decimals = this.underlyingTokenDecimals();
+
     this.setState({
-      underlyingValue: newFormattedAmt,
-      underlyingAmount: this.props.underlyingBalance,
-      dmmValue: SwapPanel.numberWithCommas(humanize(this.props.underlyingBalance.mul(NumberUtil._1).div(this.props.exchangeRate), this.props.underlyingToken.decimals)),
-      dmmAmount: this.props.underlyingBalance.mul(NumberUtil._1).div(this.props.exchangeRate),
-      lastSelected: UNDERLYING,
-      lastUnderlyingLen: newFormattedAmt.length,
-      lastDmmLen: SwapPanel.numberWithCommas(humanize(this.props.underlyingBalance.mul(NumberUtil._1).div(this.props.exchangeRate), this.props.underlyingToken.decimals)).length
+      underlyingValue: humanize(underlyingAmount, decimals),
+      underlyingAmount: underlyingAmount,
+      dmmValue: humanize(dmmAmount, decimals),
+      dmmAmount: dmmAmount,
     });
 
-    this.props.updateValue(this.props.underlyingBalance);
+    this.props.updateValue(this.props.isMinting ? this.props.underlyingBalance : this.props.dmmBalance);
+
+    const newInput = this.props.isMinting ?
+      humanize(underlyingAmount, decimals, undefined) :
+      humanize(dmmAmount, decimals, undefined);
+
+    this.onInputAmountChange(newInput)
   }
 
-  maxDmm() {
-    const newAmt = ''+humanize(this.props.dmmBalance, this.props.dmmToken.decimals);
-    const newFormattedAmt = SwapPanel.numberWithCommas(newAmt);
-    this.setState({
-      underlyingValue: SwapPanel.numberWithCommas(humanize(this.props.dmmBalance.mul(this.props.exchangeRate).div(NumberUtil._1), this.props.underlyingToken.decimals)),
-      underlyingAmount: this.props.dmmBalance.mul(this.props.exchangeRate).div(NumberUtil._1),
-      dmmValue: newFormattedAmt,
-      dmmAmount: this.props.dmmBalance,
-      lastSelected: DMM,
-      lastUnderlyingLen: SwapPanel.numberWithCommas(humanize(this.props.dmmBalance.div(this.props.exchangeRate).mul(NumberUtil._1), this.props.dmmToken.decimals)).length,
-      lastDmmLen: newFormattedAmt.length
-    });
-
-    this.props.updateValue(this.props.dmmBalance);
-  }
-
-  setUnderlying(ticker) {
+  setUnderlyingTicker(ticker) {
     this.props.updateUnderlying(ticker);
-    this.setState({ underlyingSelectorExpanded: false });
+    this.setState({underlyingSelectorExpanded: false});
+    this.resetNumericState();
   }
+
+  getLeftSideInputField = (isMinting) => {
+    return (
+      <div className={styles.inputWrapper}>
+        <input
+          className={styles.dmmInput}
+          onChange={(e) => isMinting ? this.updateUnderlying(e) : this.updateDmm(e)}
+          value={isMinting ? this.state.underlyingValue : this.state.dmmValue}
+        />
+        <div
+          className={`${styles.underlyingSelector} ${this.state.underlyingSelectorExpanded && styles.expanded}`}
+          onClick={() => this.setState({underlyingSelectorExpanded: !this.state.underlyingSelectorExpanded})}>
+          <div className={styles.asset}>
+            {isMinting ? this.props.underlyingToken.symbol : this.props.dmmToken.symbol}
+          </div>
+          <ArrowDropDown/>
+          <div
+            className={`${styles.underlyingOption} ${styles.first}`}
+            onClick={(e) => {
+              this.state.underlyingSelectorExpanded && this.setUnderlyingTicker(this.props.underlyingToken.symbol);
+              this.state.underlyingSelectorExpanded && e.stopPropagation();
+            }}>
+            {isMinting ? this.props.underlyingToken.symbol : this.props.dmmToken.symbol}
+          </div>
+          {this.props.tokens.filter(token => token.symbol !== this.props.underlyingToken.symbol).map(token => {
+            return (
+              <div
+                className={styles.underlyingOption}
+                onClick={(e) => {
+                  const targetedSymbol = isMinting ? e.target.innerHTML : e.target.innerHTML.substring(1);
+                  this.state.underlyingSelectorExpanded && this.setUnderlyingTicker(targetedSymbol);
+                  this.state.underlyingSelectorExpanded && e.stopPropagation();
+                }}>
+                {isMinting ? token.symbol : `m${token.symbol}`}
+              </div>
+            );
+          })}}
+        </div>
+      </div>
+    );
+  };
+
+  getRightSideInputView = (isMinting) => {
+    // It's possible the dmmToken isn't available yet when we call this fn. That's why we prefix the "m" in the JSX.
+    return (
+      <div className={styles.inputWrapper}>
+        <input
+          onChange={(e) => this.updateDmm(e)}
+          value={isMinting ? this.state.dmmValue : this.state.underlyingValue}
+        />
+        <div className={styles.asset}>
+          {isMinting ? `m${this.props.underlyingToken.symbol}` : this.props.underlyingToken.symbol}
+        </div>
+      </div>
+    );
+  };
 
   render() {
-    const allowance = this.props.isMinting ? this.props.underlyingAllowance : this.props.dmmAllowance;
+    const isMinting = this.props.isMinting;
+    const allowance = isMinting ? this.props.underlyingAllowance : this.props.dmmAllowance;
+    const actionLeftInputView = this.getLeftSideInputField(isMinting);
+    const actionRightInputView = this.getRightSideInputView(isMinting);
+
+    let metadataSection;
+    if (this.props.dmmToken) {
+      metadataSection = (
+        <div className={styles.supplyWrapper}>
+          <div className={`${styles.supply} ${styles.active}`}>
+            <div className={styles.name}>Active supply:</div>
+            <div className={styles.amount}>
+              {humanize(this.props.activeSupply, 18, 0, true)}
+              <span className={styles.gray}>&nbsp;{this.props.dmmToken.symbol}</span></div>
+          </div>
+          <div className={`${styles.supply} ${styles.total}`}>
+            <div className={styles.name}>Total supply:</div>
+            <div className={styles.amount}>
+              {humanize(this.props.totalSupply, 18, 0, true)}
+              <span className={styles.gray}>&nbsp;{this.props.dmmToken.symbol}</span>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      metadataSection = (<div/>);
+    }
+
+    const actionButtonHelperTooltip = this.props.isWaitingForSignature ?
+      'Awaiting signature from wallet' :
+      this.props.isWaitingForApprovalToMine ? `Your tokens are unlocking. After being unlocked, they can be used to mint ${this.dmmToken.symbol}`
+        : '';
 
     return (
       <div className={`${styles.SwapPanel} ${this.props.disabled && styles.disabled}`}>
         <ThemeProvider theme={theme}>
           <div className={styles.mintOrRedeem}>
-            <Tabs value={this.state.currentFunction} onChange={(e, newVal) => {this.setState({ currentFunction: newVal }); this.props.setIsMinting(newVal === 0)}} aria-label="simple tabs example">
-              <Tab label="Mint" />
-              <Tab label="Redeem" />
+            <Tabs value={this.state.currentFunction} onChange={(e, newSelectedIndex) => {
+              this.setState({currentFunction: newSelectedIndex});
+              this.resetNumericState();
+              this.props.setIsMinting(newSelectedIndex === 0)
+            }} aria-label="Swap Tabs">
+              <Tab label="Mint"/>
+              <Tab label="Redeem"/>
             </Tabs>
           </div>
           <div className={styles.helperText}>
-            { this.props.isMinting ? (
-              <div>Mint your DAI and USDC into mDAI and mUSDC so it can earn interest.</div>
-            ) : (
-              <div>Redeem your DAI and USDC with interest from mDAI and mUSDC.</div>
-            )}
+            {
+              this.props.isMinting ?
+                (<div>Mint your DAI and USDC into mDAI and mUSDC so it can earn interest.</div>) :
+                (<div>Redeem your mDAI and mUSDC back to DAI and USDC with interest.</div>)
+            }
           </div>
-          {/*<div className={styles.balanceSection}>
-            You have: { this.props.underlyingBalance } <span className={styles.light}>{ this.props.selectedUnderlying }</span>
-          </div>*/}
           <div className={styles.inputForm}>
-
-            <div className={styles.input}>
+            <div className={styles.inputFormWrapper}>
               <div className={styles.underlyingSection}>
-                <div className={styles.maxBalance} onClick={() => this.props.isMinting ? this.maxUnderlying() : this.maxDmm()}>
+                <div
+                  className={styles.maxBalance}
+                  onClick={() => this.onSelectMax()}
+                >
                   MAX
                 </div>
-                <div className={styles.inputWrapper}>
-                  { this.props.isMinting ? (
-                    <input
-                      onChange={(e) => this.updateUnderlying(e)}
-                      value={this.state.underlyingValue}
-                    />
-                  ) : (
-                    <input
-                      className={styles.dmmInput}
-                      onChange={(e) => this.updateDmm(e)}
-                      value={this.state.dmmValue}
-                    />
-                  )}
-                  {this.props.isMinting ? (
-                    <div className={`${styles.underlyingSelector} ${this.state.underlyingSelectorExpanded && styles.expanded}`} onClick={() => this.setState({ underlyingSelectorExpanded: true })}>
-                      <div className={styles.asset}>{ this.props.underlyingToken ? this.props.underlyingToken.symbol : 'DAI' }</div>
-                      <ArrowDropDown/>
-                      <div
-                        className={`${styles.underlyingOption} ${styles.first}`}
-                        onClick={(e) => {this.state.underlyingSelectorExpanded && this.setUnderlying(this.props.underlyingToken ? this.props.underlyingToken.symbol : 'DAI'); this.state.underlyingSelectorExpanded && e.stopPropagation();}}>
-                        { this.props.underlyingToken ? this.props.underlyingToken.symbol : 'DAI' }
-                      </div>
-                      <div
-                        className={styles.underlyingOption}
-                        onClick={(e) => {this.state.underlyingSelectorExpanded && this.setUnderlying(this.props.underlyingToken ? this.props.underlyingToken.symbol === 'DAI' ? 'USDC' : 'DAI' : 'USDC'); this.state.underlyingSelectorExpanded && e.stopPropagation();}}>
-                        { this.props.underlyingToken ? this.props.underlyingToken.symbol === 'DAI' ? 'USDC' : 'DAI' : 'USDC' }
-                      </div>
-                    </div>
-                  ) : (
-                    <div className={`${styles.underlyingSelector} ${styles.dmmUnderlying} ${this.state.underlyingSelectorExpanded && styles.expanded}`} onClick={() => this.setState({ underlyingSelectorExpanded: true })}>
-                      <div className={styles.asset}>{ this.props.dmmToken ? this.props.dmmToken.name : 'mDAI' }</div>
-                      <ArrowDropDown/>
-                      <div
-                        className={`${styles.underlyingOption} ${styles.first}`}
-                        onClick={(e) => {this.state.underlyingSelectorExpanded && this.setUnderlying(this.props.dmmToken ? this.props.dmmToken.name : 'mDAI'); this.state.underlyingSelectorExpanded && e.stopPropagation();}}>
-                        { this.props.dmmToken ? this.props.dmmToken.name : 'mDAI' }
-                      </div>
-                      <div
-                        className={styles.underlyingOption}
-                        onClick={(e) => {this.state.underlyingSelectorExpanded && this.setUnderlying(this.props.dmmToken ? this.props.dmmToken.name === 'mDAI' ? 'mUSDC' : 'mDAI' : 'mUSDC'); this.state.underlyingSelectorExpanded && e.stopPropagation();}}>
-                        { this.props.dmmToken ? this.props.dmmToken.name === 'mDAI' ? 'mUSDC' : 'mDAI' : 'mUSDC' }
-                      </div>
-                    </div>
-                  )}
-                </div>
+                {actionLeftInputView}
               </div>
               <div className={styles.arrow}>
                 <div className={styles.rightArrow}>
@@ -308,54 +352,20 @@ class SwapPanel extends React.Component {
                 </div>
               </div>
               <div className={styles.dmmSection}>
-                <div className={styles.maxBalance} onClick={() => this.props.isMinting ? this.maxUnderlying() : this.maxDmm()}>
-                  MAX
-                </div>
-                { this.props.isMinting ? (
-                  <div className={styles.inputWrapper}>
-                    <input
-                      onChange={(e) => this.updateDmm(e)}
-                      value={this.state.dmmValue}
-                    />
-                    <div className={styles.asset}>
-                      m{ this.props.underlyingToken ? this.props.underlyingToken.symbol : 'DAI' }
-                    </div>
-                  </div>
-                ) : (
-                  <div className={styles.inputWrapper}>
-                    <input
-                      onChange={(e) => this.updateUnderlying(e)}
-                      value={this.state.underlyingValue}
-                    />
-                    <div className={styles.asset}>
-                      { this.props.underlyingToken ? this.props.underlyingToken.symbol : 'DAI' }
-                    </div>
-                  </div>
-                )}
+                {actionRightInputView}
               </div>
             </div>
-            {/*<div className={styles.youReceive}>
-              You receive { amount } m{ this.props.selectedUnderlying }
-            </div>*/}
+          </div>
+          <div className={styles.errorSection}>
+            <div>{this.state.inputError}</div>
           </div>
           <div className={styles.submit}>
-            { this.props.dmmToken ? (
-              <div className={styles.supplyWrapper}>
-                <div className={`${styles.supply} ${styles.active}`}>
-                  <div className={styles.name}>Active supply:</div><div className={styles.amount}>{ ''+SwapPanel.numberWithCommas(parseFloat(humanize(this.props.activeSupply, this.props.dmmToken.decimals, 4)).toFixed(0)) } <span className={styles.gray}>{ this.props.dmmToken.name }</span></div>
-                </div>
-                <div className={`${styles.supply} ${styles.total}`}>
-                  <div className={styles.name}>Total supply:</div><div className={styles.amount}>{ ''+SwapPanel.numberWithCommas(humanize(this.props.totalSupply, this.props.dmmToken.decimals, 2)) } <span className={styles.gray}>{ this.props.dmmToken.name }</span></div>
-                </div>
-              </div>
-            ) : (
-              <div/>
-            )}
-            { this.props.isWaitingForSignature ? (
-              allowance.eq(NumberUtil._0) ? (
-                <Tooltip title={'Awaiting signature from wallet'}>
+            {metadataSection}
+            {this.props.isWaitingForSignature ? (
+              (this.props.isMinting && allowance.eq(NumberUtil._0)) ? (
+                <Tooltip title={actionButtonHelperTooltip}>
                   <Button className={`${styles.submitButton} ${styles.loading}`} disabled={false}>
-                    <CircularProgress color={'primary'}/> Unlocking
+                    <CircularProgress color={'primary'}/>Unlocking
                   </Button>
                 </Tooltip>
               ) : (
@@ -366,7 +376,10 @@ class SwapPanel extends React.Component {
                 </Tooltip>
               )
             ) : (
-              <Button className={styles.submitButton} onClick={() => this.props.onDoOperation()} disabled={this.state.inputError}>
+              <Button
+                className={[styles.submitButton, (this.state.isInitialLoad || !!this.state.inputError) ? styles.submitButtonDisabled : '']}
+                onClick={() => this.props.onDoOperation()}
+                disabled={!!this.state.inputError}>
                 {this.props.isMinting ? "Mint" : "Redeem"}
               </Button>
             )}

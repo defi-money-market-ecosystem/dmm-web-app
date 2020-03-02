@@ -41,7 +41,7 @@ class DmmToolbar extends React.Component {
         <div className={styles.content}>
           <div className={styles.logoWrapper}>
             <div className={styles.logo}>
-              <img src={DMMLogo}/>
+              <img src={DMMLogo} alt={"DMM Logo"}/>
             </div>
             <div className={styles.logoText}>
               DMM <span className={styles.swapText}>Swap</span>

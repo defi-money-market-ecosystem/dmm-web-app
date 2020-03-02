@@ -1,3 +1,4 @@
+@import '../../layout/variables.scss';
 
 .SwapPanel {
   width: 46%;
@@ -67,11 +68,17 @@
   margin: 20px auto 20px;
 }
 
+.inputFormWrapper {
+  display: flex;
+  flex-direction: row;
+}
+
 .underlyingSection,
 .dmmSection {
   width: 45%;
   display: inline-block;
   vertical-align: top;
+  align-self: flex-end;
 }
 
 .arrow {
@@ -301,6 +308,18 @@ button:focus {
   padding: 6px 12px !important;
 }
 
+.submitButtonDisabled {
+  color: rgba(0, 0, 0, 0.30) !important;
+  background-color: rgba(#327ccb, 0.30) !important;
+  cursor: not-allowed !important;
+  transition: none;
+}
+
+.submitButtonDisabled:hover {
+  color: rgba(0, 0, 0, 0.30) !important;
+  background-color: rgba(#327ccb, 0.30) !important;
+}
+
 .submitButton.loading {
   width: 160px;
 }
@@ -354,4 +373,17 @@ button:focus {
     width: 100% !important;
     margin-top: 20px !important;
   }
+}
+
+.inputRightSide {
+  align-self: flex-end;
+}
+
+.errorSection {
+  color: $pink;
+  font-size: 12px;
+  padding: 0 42px 8px;
+  margin-top: -16px;
+  text-align: left;
+  width: 87%;
 }
