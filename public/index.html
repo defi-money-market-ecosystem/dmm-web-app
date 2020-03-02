@@ -1,11 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-159439630-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-159439630-1');
+    </script>
+
     <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon-16x16.png" sizes="16x16" />
+
+    <!-- Primary Meta Tags -->
+    <title>DMM Ecosystem</title>
+    <meta name="title" content="DMM Swap">
+    <meta name="description" content="Swap your crypto for mAssets to earn consistent interest backed by real-world, revenue-producing assets.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://app.defimoneymarket.com/">
+    <meta property="og:title" content="DMM Swap">
+    <meta property="og:description" content="Swap your crypto for mAssets to earn consistent interest backed by real-world, revenue-producing assets.">
+    <meta property="og:image" content="%PUBLIC_URL%/meta-image-flat.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://app.defimoneymarket.com/">
+    <meta property="twitter:title" content="DMM Swap">
+    <meta property="twitter:description" content="Swap your crypto for mAssets to earn consistent interest backed by real-world, revenue-producing assets.">
+    <meta property="twitter:image" content="%PUBLIC_URL%/meta-image-flat.png">
+
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon-32x32.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
-      <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Quicksand|Raleway:200,300,400,500,600,700&display=swap" rel="stylesheet">
-    <meta name="theme-color" content="#000000" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Quicksand|Raleway:200,300,400,500,600,700&display=swap" rel="stylesheet">
     <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -20,7 +52,6 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>DMM Swap</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -36,4 +67,28 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <script src="/assets/vendor/jquery/jquery.min.js"></script>
+  <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $.getJSON("https://exchange-api.dolomite.io/v1/compliance/geolocation", function(response) {
+        if(response.data.country_code !== 'CN'){
+          let d = document;
+          let h = d.getElementsByTagName('head')[0];
+          let s = d.createElement('script');
+          s.type = 'text/javascript';
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=UA-122232197-1';
+          h.appendChild(s);
+
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-122232197-1');
+        }
+      }, "jsonp");
+    });
+  </script>
 </html>
