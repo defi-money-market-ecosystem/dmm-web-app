@@ -364,6 +364,9 @@ class App extends React.Component {
           return true;
         }
       })
+      .then(() => {
+        this.setState({isLoading: false});
+      })
       .catch(error => {
         if(error.code !== 4001) {
           this.setState({
