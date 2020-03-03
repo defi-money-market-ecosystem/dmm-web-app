@@ -57,7 +57,7 @@ class DmmWeb3Service {
             walletName: "fortmatic",
             apiKey: "pk_live_45D9847605667E0F",
             preferred: true,
-            // label: 'Login with Phone',
+            label: 'Login with Email or Phone',
           },
           // {
           //   walletName: "portis",
