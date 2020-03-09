@@ -7,7 +7,6 @@ class Token {
     this.decimals = decimals;
     this.imageUrl = imageUrl;
   }
-
 }
 
 export const DAI = new Token(

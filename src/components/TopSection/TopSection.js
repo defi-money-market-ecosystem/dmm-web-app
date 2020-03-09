@@ -36,8 +36,8 @@ class TopSection extends React.Component {
                   <span className={styles.light}>&nbsp;mDAI =&nbsp;</span>
                   <CountUp
                     start={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.daiRate).div(NumberUtil._1),18)) : 0}
-                    end={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.daiRate).div(NumberUtil._1).add(fromDecimalToBN(0.000007134703196,18)),18)) : 0}
-                    duration={60 * 60}
+                    end={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.daiRate).div(NumberUtil._1).add(fromDecimalToBN(0.0007134703196,18)),18)) : 0}
+                    duration={60 * 60 * 100}
                     separator=" "
                     decimals={8}
                     decimal="."
@@ -53,8 +53,8 @@ class TopSection extends React.Component {
                   <span className={styles.light}>&nbsp;DAI =&nbsp;</span>
                   <CountUp
                     start={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.daiRate),18)) : 0}
-                    end={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.daiRate).sub(fromDecimalToBN(0.000006715014772,18)),18)) : 0}
-                    duration={60 * 60}
+                    end={this.props.daiRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.daiRate).sub(fromDecimalToBN(0.0006715014772,18)),18)) : 0}
+                    duration={60 * 60 * 100}
                     separator=" "
                     decimals={8}
                     decimal="."
@@ -72,8 +72,8 @@ class TopSection extends React.Component {
                   <span className={styles.light}>&nbsp;mUSDC =&nbsp;</span>
                   <CountUp
                     start={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.usdcRate).div(NumberUtil._1),18)) : 0}
-                    end={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.usdcRate).div(NumberUtil._1).add(fromDecimalToBN(0.000007134703196,18)),18)) : 0}
-                    duration={60 * 60}
+                    end={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(this.props.usdcRate).div(NumberUtil._1).add(fromDecimalToBN(0.0007134703196,18)),18)) : 0}
+                    duration={60 * 60 * 100}
                     separator=" "
                     decimals={8}
                     decimal="."
@@ -89,8 +89,8 @@ class TopSection extends React.Component {
                   <span className={styles.light}>&nbsp;USDC =&nbsp;</span>
                   <CountUp
                     start={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.usdcRate),18)) : 0}
-                    end={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.usdcRate).sub(fromDecimalToBN(0.000006715014772,18)),18)) : 0}
-                    duration={60 * 60}
+                    end={this.props.usdcRate ? Number.parseFloat(humanize(NumberUtil._1.mul(NumberUtil._1).div(this.props.usdcRate).sub(fromDecimalToBN(0.0006715014772,18)),18)) : 0}
+                    duration={60 * 60 * 100}
                     separator=" "
                     decimals={8}
                     decimal="."

@@ -1,6 +1,7 @@
 import * as React from "react";
-import {humanize} from "../../utils/NumberUtil";
+import {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
 import {USDC, DAI} from "../../models/Tokens";
+import CountUp from 'react-countup';
 
 import styles from "./BalancesPanel.module.scss";
 import NumberUtil from "../../utils/NumberUtil";
@@ -8,15 +9,39 @@ import {CircularProgress} from "@material-ui/core";
 
 class BalancesPanel extends React.Component {
 
-  mAssetToDollarValueAndLocalize = (mAsset, amountBN) => {
+  mAssetToDollarValueAndLocalize(mAsset, amountBN) {
     // For right now, just return the mAsset to exchange rate value. In the future, like with mETH, we'll need to
     // convert ETH to dollars.
 
     let bnValue;
     if (mAsset.symbol === this.props.mDaiToken.symbol) {
-      bnValue = amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1);
+      return (
+        <CountUp
+          start={this.props.mDaiExchangeRate ? Number.parseFloat(humanize(amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1),this.props.mDaiToken.decimals)) : 0}
+          end={this.props.mDaiExchangeRate ? Number.parseFloat(humanize(amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1).add(fromDecimalToBN(0.0007134703196,18).mul(amountBN).div(NumberUtil._1)),this.props.mDaiToken.decimals)) : 0}
+          duration={60 * 60 * 100}
+          separator=" "
+          decimals={8}
+          decimal="."
+          prefix=""
+          suffix=""
+        />
+      );
+      //bnValue = amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1);
     } else if (mAsset.symbol === this.props.mUsdcToken.symbol) {
-      bnValue = amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1);
+      return (
+        <CountUp
+          start={this.props.mUsdcExchangeRate ? Number.parseFloat(humanize(amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1),this.props.mUsdcToken.decimals)) : 0}
+          end={this.props.mUsdcExchangeRate ? Number.parseFloat(humanize(amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1).add(fromDecimalToBN(0.0007134703196,18).mul(amountBN).div(NumberUtil._1)),this.props.mUsdcToken.decimals)) : 0}
+          duration={60 * 60 * 100}
+          separator=" "
+          decimals={8}
+          decimal="."
+          prefix=""
+          suffix=""
+        />
+      )
+      //bnValue = amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1);
     } else {
       console.error("Invalid symbol, found: ", mAsset.symbol);
       return '0';
@@ -29,11 +54,11 @@ class BalancesPanel extends React.Component {
   };
 
   /* TODO - Add US dollar value of assets (specifically m assets, but with ETH it'll also be useful). Will become more useful as the value of m assets and the underlying assets diverge. Can also have a dropdown in the upper right with a choice of currency. */
-  render = () => {
+  render() {
     const mAssets = [this.props.mDaiToken, this.props.mUsdcToken];
     const underlyingAssets = [DAI, USDC];
     const underlyingBalances = [this.props.daiBalance, this.props.usdcBalance];
-    const mBalances = [this.props.mDaiBalance, this.props.mUsdcBalance];
+    const mBalances = [fromDecimalToBN(246,this.props.mDaiToken ? this.props.mDaiToken.decimals : 18),fromDecimalToBN(100,6)];//this.props.mUsdcToken ? this.props.mUsdcToken.decimals : 18)];//[this.props.mDaiBalance, this.props.mUsdcBalance];
 
     const assetBalancesViews = underlyingAssets.map((underlyingAsset, index) => {
       const mAsset = mAssets[index];

@@ -427,6 +427,8 @@ class App extends React.Component {
             totalSupply={this.state.totalSupply}
             tokens={this.state.tokens}
             isLoadingBalances={this.state.isLoadingBalances}
+            daiRate={this.state.mDaiExchangeRate}
+            usdcRate={this.state.mUsdcExchangeRate}
           />
         </div>
         <Snackbar open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}
