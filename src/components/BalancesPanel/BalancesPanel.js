@@ -47,9 +47,10 @@ class BalancesPanel extends React.Component {
       return '0';
     }
 
-    return parseFloat(humanize(bnValue, mAsset.decimals, 0)).toLocaleString("en-US", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+    const precision = 2;
+    return parseFloat(humanize(bnValue, mAsset.decimals, precision)).toLocaleString("en-US", {
+      minimumFractionDigits: precision,
+      maximumFractionDigits: precision,
     })
   };
 

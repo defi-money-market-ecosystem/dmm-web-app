@@ -39,6 +39,63 @@ class DmmWeb3Service {
     this.onboard = Onboard({
       dappId: '9171b34b-ab20-4982-b3d9-43c073657a88',
       networkId: Number.parseInt(process.env.REACT_APP_NETWORK_ID),
+      walletSelect: {
+        wallets: [
+          {
+            walletName: "coinbase",
+            preferred: true,
+          },
+          {
+            walletName: "trust",
+            preferred: true,
+          },
+          {
+            walletName: "metamask",
+            preferred: true,
+          },
+          {
+            walletName: "fortmatic",
+            apiKey: "pk_live_45D9847605667E0F",
+            preferred: true,
+            label: 'Login with Email or Phone',
+          },
+          // {
+          //   walletName: "portis",
+          //   apiKey: PORTIS_KEY,
+          //   preferred: true,
+          //   label: 'Login with Email',
+          // },
+          // {
+          //   walletName: "squarelink",
+          //   apiKey: SQUARELINK_KEY
+          // },
+          {
+            walletName: "authereum"
+          },
+          {
+            walletName: "walletConnect",
+            infuraKey: "6016c4ab356b402ab455b2a8890efe7f",
+            preferred: true,
+          },
+          {
+            walletName: "opera"
+          },
+          {
+            walletName: "operaTouch"
+          },
+          {
+            walletName: "torus",
+
+            preferred: true,
+          },
+          {
+            walletName: "status"
+          },
+          {
+            walletName: "dapper",
+          },
+        ],
+      },
       subscriptions: {
         address: (address) => {
           Object.values(DmmWeb3Service.walletChangeFns).forEach((callbackFn) => {

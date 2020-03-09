@@ -16,22 +16,13 @@ class DmmToolbar extends React.Component {
     };
 
     this.walletChangeUid = DmmWeb3Service.onWalletChange((wallet) => {
-      this.setState({address: wallet.address});
+      this.setState({address: wallet ? wallet.address : undefined});
     });
   }
 
   componentWillUnmount() {
     DmmWeb3Service.removeOnWalletChange(this.walletChangeUid);
   }
-
-  loadWallet = async () => {
-    this.setState({isLoading: true});
-    const result = await DmmWeb3Service.onboard.walletSelect();
-    if (result) {
-      await DmmWeb3Service.instance.wallet.connect();
-    }
-    this.setState({isLoading: false});
-  };
 
   render = () => {
     const isWalletLoaded = !!DmmWeb3Service.onboard.getState().address;
@@ -57,7 +48,7 @@ class DmmToolbar extends React.Component {
               { this.state.isLoading ? (
                 <CircularProgress className={styles.progressBar} color={"inherit"}/>
               ) : (
-                <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} onClick={this.loadWallet}>
+                <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} onClick={() => this.props.loadWallet()}>
                   {isWalletLoaded ? (
                     <div><div>{'0x' + DmmWeb3Service.onboard.getState().address.substring(2,4) + '...' + DmmWeb3Service.onboard.getState().address.slice(-4)}</div><div className={styles.walletConnected}>Wallet Connected</div></div>
                   ) : "Connect Wallet"}

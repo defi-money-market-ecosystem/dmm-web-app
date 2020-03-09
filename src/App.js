@@ -354,19 +354,35 @@ class App extends React.Component {
     });
   };
 
-  loadWallet = async () => {
+  loadWallet = () => {
     this.setState({isLoading: true});
-    const result = await DmmWeb3Service.onboard.walletSelect();
-    if (result) {
-      await DmmWeb3Service.instance.wallet.connect();
-    }
-    this.setState({isLoading: false});
+    DmmWeb3Service.onboard.walletSelect()
+      .then(result => {
+        if(result) {
+          return DmmWeb3Service.instance.wallet.connect();
+        } else {
+          return true;
+        }
+      })
+      .then(() => {
+        this.setState({isLoading: false});
+      })
+      .catch(error => {
+        if(error.code !== 4001) {
+          this.setState({
+            snackMessage: `There was an unknown error loading your wallet. Error Code: ${error.code}`
+          });
+        }
+        this.setState({isLoading: false});
+      })
   };
 
   render() {
     return (
       <>
-        <DmmToolbar/>
+        <DmmToolbar
+          loadWallet={() => this.loadWallet()}
+        />
         <TopSection
           daiRate={this.state.mDaiExchangeRate}
           usdcRate={this.state.mUsdcExchangeRate}
