@@ -57,7 +57,7 @@ class BalancesPanel extends React.Component {
     const mAssets = [this.props.mDaiToken, this.props.mUsdcToken];
     const underlyingAssets = [DAI, USDC];
     const underlyingBalances = [this.props.daiBalance, this.props.usdcBalance];
-    const mBalances = [fromDecimalToBN(246,this.props.mDaiToken ? this.props.mDaiToken.decimals : 18),fromDecimalToBN(10000,6)];//[this.props.mDaiBalance, this.props.mUsdcBalance];
+    const mBalances = [this.props.mDaiBalance, this.props.mUsdcBalance];
 
     const assetBalancesViews = underlyingAssets.map((underlyingAsset, index) => {
       const mAsset = mAssets[index];
