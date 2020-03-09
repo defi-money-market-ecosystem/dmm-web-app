@@ -111,7 +111,7 @@ class App extends React.Component {
 
     const allowance = this.state.isMinting ? this.state.underlyingAllowance : this.state.dmmAllowance;
 
-    console.log("Allowance ", allowance.toString());
+    //console.log("Allowance ", allowance.toString());
 
     this.setState({
       isWaitingForSignature: true,
@@ -432,7 +432,7 @@ class App extends React.Component {
             }}
             updateValue={(val) => this.setState({inputValue: val})}
             setIsMinting={(val) => this.setState({isMinting: val})}
-            exchangeRate={this.state.exchangeRate}
+            exchangeRate={this.state.underlyingToken.symbol === DAI.symbol ? this.state.mDaiExchangeRate : this.state.mUsdcExchangeRate}
             daiBalance={this.state.daiBalance}
             usdcBalance={this.state.usdcBalance}
             mDaiBalance={this.state.mDaiBalance}

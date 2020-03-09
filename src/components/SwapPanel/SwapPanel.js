@@ -70,7 +70,7 @@ class SwapPanel extends React.Component {
     const newFormattedAmount = isInvalid || newAmount.includes('.') ?
       newAmount :
       humanize(fromDecimalToBN(newAmount, decimals), decimals, undefined, true);
-    console.log("newAmount ", newAmount, fromDecimalToBN(newAmount, decimals).toString(), humanize(fromDecimalToBN(newAmount, decimals), decimals, undefined, true), newFormattedAmount, isInvalid, newAmount.includes('.'));
+    //console.log("newAmount ", newAmount, fromDecimalToBN(newAmount, decimals).toString(), humanize(fromDecimalToBN(newAmount, decimals), decimals, undefined, true), newFormattedAmount, isInvalid, newAmount.includes('.'));
 
     return {newAmount, newFormattedAmount, isInvalid}
   }
@@ -124,17 +124,17 @@ class SwapPanel extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.exchangeRate !== this.props.exchangeRate) {
-      if (this.props.isMinting) {
+      if (this.state.lastSelected === UNDERLYING) {
         const dmmAmount = this.state.underlyingAmount.isZero() ? NumberUtil._0 : this.state.underlyingAmount.mul(NumberUtil._1).div(this.props.exchangeRate);
-        this.setState({
-          dmmValue: !this.state.inputError && humanize(dmmAmount, this.underlyingTokenDecimals(), undefined, true),
-          dmmAmount: !this.state.inputError && dmmAmount,
+        !this.state.inputError && this.setState({
+          dmmValue: humanize(dmmAmount, this.underlyingTokenDecimals(), undefined, true),
+          dmmAmount: dmmAmount,
         });
       } else {
         const underlyingAmount = this.state.dmmAmount.isZero() ? NumberUtil._0 : this.state.dmmAmount.mul(this.props.exchangeRate).div(NumberUtil._1);
-        this.setState({
-          underlyingValue: !this.state.inputError && humanize(underlyingAmount, this.underlyingTokenDecimals(), undefined, true),
-          underlyingAmount: !this.state.inputError && underlyingAmount,
+        !this.state.inputError && this.setState({
+          underlyingValue: humanize(underlyingAmount, this.underlyingTokenDecimals(), undefined, true),
+          underlyingAmount: underlyingAmount,
         });
         !this.state.inputError && this.props.updateValue(this.state.dmmAmount.mul(this.props.exchangeRate).div(NumberUtil._1));
       }
