@@ -207,6 +207,7 @@ class SwapPanel extends React.Component {
       underlyingAmount: underlyingAmount,
       dmmValue: humanize(dmmAmount, decimals),
       dmmAmount: dmmAmount,
+      lastSelected: this.props.isMinting ? UNDERLYING : DMM,
     });
 
     this.props.updateValue(this.props.isMinting ? this.props.underlyingBalance : this.props.dmmBalance);

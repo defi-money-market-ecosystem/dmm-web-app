@@ -20,28 +20,26 @@ class BalancesPanel extends React.Component {
           start={this.props.mDaiExchangeRate ? Number.parseFloat(humanize(amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1),this.props.mDaiToken.decimals)) : 0}
           end={this.props.mDaiExchangeRate ? Number.parseFloat(humanize(amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1).add(fromDecimalToBN(0.0007134703196,18).mul(amountBN).div(NumberUtil._1)),this.props.mDaiToken.decimals)) : 0}
           duration={60 * 60 * 100}
-          separator=" "
-          decimals={8}
+          separator=","
+          decimals={Math.min(Math.max(9-Number.parseFloat(humanize(amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1),this.props.mDaiToken.decimals)).toString().split('.')[0].length,2),8)} // Take the length of the balance to get the number of digits in it, 9 minus that number is how many decimals there should be for it to look good (min 2, max 8)
           decimal="."
           prefix=""
           suffix=""
         />
       );
-      //bnValue = amountBN.mul(this.props.mDaiExchangeRate).div(NumberUtil._1);
     } else if (mAsset.symbol === this.props.mUsdcToken.symbol) {
       return (
         <CountUp
           start={this.props.mUsdcExchangeRate ? Number.parseFloat(humanize(amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1),this.props.mUsdcToken.decimals)) : 0}
           end={this.props.mUsdcExchangeRate ? Number.parseFloat(humanize(amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1).add(fromDecimalToBN(0.0007134703196,18).mul(amountBN).div(NumberUtil._1)),this.props.mUsdcToken.decimals)) : 0}
           duration={60 * 60 * 100}
-          separator=" "
-          decimals={8}
+          separator=","
+          decimals={Math.min(Math.max(9-Number.parseFloat(humanize(amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1),this.props.mUsdcToken.decimals)).toString().split('.')[0].length,2),8)}
           decimal="."
           prefix=""
           suffix=""
         />
       )
-      //bnValue = amountBN.mul(this.props.mUsdcExchangeRate).div(NumberUtil._1);
     } else {
       console.error("Invalid symbol, found: ", mAsset.symbol);
       return '0';
@@ -59,7 +57,7 @@ class BalancesPanel extends React.Component {
     const mAssets = [this.props.mDaiToken, this.props.mUsdcToken];
     const underlyingAssets = [DAI, USDC];
     const underlyingBalances = [this.props.daiBalance, this.props.usdcBalance];
-    const mBalances = [fromDecimalToBN(246,this.props.mDaiToken ? this.props.mDaiToken.decimals : 18),fromDecimalToBN(100,6)];//this.props.mUsdcToken ? this.props.mUsdcToken.decimals : 18)];//[this.props.mDaiBalance, this.props.mUsdcBalance];
+    const mBalances = [fromDecimalToBN(246,this.props.mDaiToken ? this.props.mDaiToken.decimals : 18),fromDecimalToBN(10000,6)];//[this.props.mDaiBalance, this.props.mUsdcBalance];
 
     const assetBalancesViews = underlyingAssets.map((underlyingAsset, index) => {
       const mAsset = mAssets[index];
