@@ -1,4 +1,3 @@
-// const baseUrl = "https://api.defimoneymarket.com";
-const baseUrl = "http://localhost:9000";
+const baseUrl = "https://api.defimoneymarket.com";
 
 module.exports.baseUrl = baseUrl;
