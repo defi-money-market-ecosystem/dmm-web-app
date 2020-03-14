@@ -19,7 +19,7 @@ class TopSection extends React.Component {
                 {humanize(this.props.totalTokensPurchased, 18, 0, true)}
               </div>
               <div className={styles.statSubtitle}>
-                mTokens Purchased
+                Total mTokens Purchased
               </div>
             </div>
           </div>
