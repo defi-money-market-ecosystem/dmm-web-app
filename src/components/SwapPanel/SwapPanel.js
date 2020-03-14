@@ -271,7 +271,7 @@ class SwapPanel extends React.Component {
     return (
       <div className={styles.inputWrapper}>
         <input
-          onChange={(e) => this.updateDmm(e)}
+          onChange={(e) => isMinting ? this.updateUnderlying(e) : this.updateDmm(e)}
           value={isMinting ? this.state.dmmValue : this.state.underlyingValue}
         />
         <div className={styles.asset}>

@@ -34,7 +34,7 @@ class DmmTokenService {
       {headers: {'Accept': 'application/json'}},
     );
     const rawBN = new NumberUtil.BN((await response.json())["data"]["active_supply"]);
-    return DmmTokenService.convertNumberToWei(dmmToken, rawBN);
+    return DmmTokenService.convertNumberToWei(dmmToken.decimals, rawBN);
   }
 
   static async getTotalSupply(dmmToken) {
@@ -43,17 +43,35 @@ class DmmTokenService {
       {headers: {'Accept': 'application/json'}},
     );
     const rawBN = new NumberUtil.BN((await response.json())["data"]["total_supply"]);
-    return DmmTokenService.convertNumberToWei(dmmToken, rawBN);
+    return DmmTokenService.convertNumberToWei(dmmToken.decimals, rawBN);
   }
 
-  static convertNumberToWei(dmmToken, amountBN) {
-    if(dmmToken.decimals === 18) {
+  static async getTotalTokensPurchased() {
+    const response = await fetch(
+      `${Index.baseUrl}/v1/dmm/tokens/total-purchased`,
+      {headers: {'Accept': 'application/json'}},
+    );
+    const rawBN = new NumberUtil.BN((await response.json())["data"]["total_tokens_purchased"]);
+    return DmmTokenService.convertNumberToWei(18, rawBN);
+  }
+
+  static async addNewTokensToTotalTokensPurchased(transactionHash) {
+    const response = await fetch(
+      `${Index.baseUrl}/v1/dmm/tokens/add-total-purchased-by-hash/${transactionHash}`,
+      {headers: {'Accept': 'application/json'}, method: 'POST'},
+    );
+    const rawBN = new NumberUtil.BN((await response.json())["data"]["total_tokens_purchased"]);
+    return DmmTokenService.convertNumberToWei(18, rawBN);
+  }
+
+  static convertNumberToWei(decimals, amountBN) {
+    if(decimals === 18) {
       return amountBN;
-    } else if (dmmToken.decimals > 18) {
-      const diff = dmmToken.decimals - 18;
+    } else if (decimals > 18) {
+      const diff = decimals - 18;
       return amountBN.div(new NumberUtil.BN(10).pow(new NumberUtil.BN(diff)));
     } else /* decimals < 18 */ {
-      const diff = 18 - dmmToken.decimals;
+      const diff = 18 - decimals;
       return amountBN.mul(new NumberUtil.BN(10).pow(new NumberUtil.BN(diff)));
     }
   }
