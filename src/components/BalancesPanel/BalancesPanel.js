@@ -13,7 +13,6 @@ class BalancesPanel extends React.Component {
     // For right now, just return the mAsset to exchange rate value. In the future, like with mETH, we'll need to
     // convert ETH to dollars.
 
-    let bnValue;
     if (mAsset.symbol === this.props.mDaiToken.symbol) {
       return (
         <CountUp
