@@ -20,10 +20,9 @@ class TopSection extends React.Component {
                 {
                   this.props.totalTokensPurchased.eq(new NumberUtil.BN(0)) ?
                     (<div className={styles.totalTokensPurchasedLoader}><CircularProgress/></div>) :
-                    (<div className={styles.totalTokensPurchasedLoader}><CircularProgress/></div>)
-                    // (<span>
-                      //{humanize(this.props.totalTokensPurchased, 18, 0, true)}
-                    // </span>)
+                    (<span>
+                      {humanize(this.props.totalTokensPurchased, 18, 0, true)}
+                    </span>)
                 }
               </div>
               <div className={styles.statSubtitle}>
