@@ -12,7 +12,7 @@ import NumberUtil, {BN} from "./utils/NumberUtil";
 import ERC20Service from "./services/ERC20Service";
 import DmmTokenService from "./services/DmmTokenService";
 
-import {USDC, DAI} from "./models/Tokens";
+import {DAI, USDC} from "./models/Tokens";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
@@ -185,7 +185,7 @@ class App extends React.Component {
         });
         return transactionHash;
       })
-      .then(async transactionHash => {
+      .then(async () => {
         this.setState({
           isWaitingForActionToMine: false,
         });
@@ -216,26 +216,11 @@ class App extends React.Component {
   };
 
   getAllowance = async (token, spender) => {
-    return await ERC20Service.getAllowance(token.address, DmmWeb3Service.walletAddress(), spender ? spender.address : this.state.dmmToken.address)
-      .catch((e) => {
-        console.error("Could not get allowance due to error: ", e);
-        this.setState({
-          unknownError: `Could not check if ${token.symbol} is enabled due to an unknown error`
-        });
-        return new NumberUtil.BN('0');
-      });
+    return await ERC20Service.getAllowance(token.address, DmmWeb3Service.walletAddress(), spender ? spender.address : this.state.dmmToken.address);
   };
 
   getBalance = async (token) => {
-    return await ERC20Service.getBalance(token.address, DmmWeb3Service.walletAddress())
-      .then(balanceString => new NumberUtil.BN(balanceString, 10))
-      .catch((e) => {
-        console.error("Could not get balance due to error: ", e);
-        this.setState({
-          unknownError: `Could not check if ${token.symbol} is enabled due to an unknown error`
-        });
-        return NumberUtil._0;
-      });
+    return await ERC20Service.getBalance(token.address, DmmWeb3Service.walletAddress());
   };
 
   componentWillUnmount() {
@@ -273,24 +258,34 @@ class App extends React.Component {
     const mDaiTotalSupply = await mDaiTotalSupplyPromise;
     const mUsdcTotalSupply = await mUsdcTotalSupplyPromise;
 
-    if (!DmmWeb3Service.walletAddress()) {
-      // GUARD STATEMENT; note returns at the end of this if-statement.
-      const isDAI = this.state.underlyingToken.symbol === DAI.symbol;
-      const exchangeRate = isDAI ? mDaiExchangeRate : mUsdcExchangeRate;
+    const isDAI = this.state.underlyingToken.symbol === DAI.symbol;
+    const exchangeRate = isDAI ? mDaiExchangeRate : mUsdcExchangeRate;
+    this.setState({
+      exchangeRate,
+      mDaiExchangeRate,
+      mUsdcExchangeRate,
+      mDaiActiveSupply,
+      mUsdcActiveSupply,
+      mDaiTotalSupply,
+      mUsdcTotalSupply,
+      activeSupply: isDAI ? mDaiActiveSupply : mUsdcActiveSupply,
+      totalSupply: isDAI ? mDaiTotalSupply : mUsdcTotalSupply,
+      totalTokensPurchased,
+    });
 
-      this.setState({
-        exchangeRate,
-        mDaiExchangeRate,
-        mUsdcExchangeRate,
-        mDaiActiveSupply,
-        mUsdcActiveSupply,
-        mDaiTotalSupply,
-        mUsdcTotalSupply,
-        activeSupply: isDAI ? mDaiActiveSupply : mUsdcActiveSupply,
-        totalSupply: isDAI ? mDaiTotalSupply : mUsdcTotalSupply,
-        totalTokensPurchased,
+    if (DmmWeb3Service.walletAddress()) {
+      this.loadWeb3Data(0).catch(e => {
+        console.error("Could not get web3 data due to error: ", e);
+        this.setState({
+          unknownError: `Could not refresh balances due to error`
+        });
       });
-      return;
+    }
+  };
+
+  loadWeb3Data = async (retryCount) => {
+    if (retryCount === 5) {
+      return Promise.reject("Too many retries");
     }
 
     const underlyingToken = this.state.underlyingToken;
@@ -305,43 +300,53 @@ class App extends React.Component {
     const mDaiBalancePromise = this.getBalance(this.state.dmmTokensMap[DAI.address.toLowerCase()]);
     const mUsdcBalancePromise = this.getBalance(this.state.dmmTokensMap[USDC.address.toLowerCase()]);
 
-    const daiBalance = await daiBalancePromise;
-    const usdcBalance = await usdcBalancePromise;
-    const daiAllowance = await daiAllowancePromise;
-    const usdcAllowance = await usdcAllowancePromise;
-    const mDaiBalance = await mDaiBalancePromise;
-    const mUsdcBalance = await mUsdcBalancePromise;
+    const allPromise = Promise.all([
+      daiBalancePromise,
+      usdcBalancePromise,
+      daiAllowancePromise,
+      usdcAllowancePromise,
+      mDaiBalancePromise,
+      mUsdcBalancePromise,
+    ]);
 
-    const isDAI = underlyingToken.symbol === DAI.symbol;
-    const underlyingBalance = isDAI ? daiBalance : usdcBalance;
-    const dmmBalance = isDAI ? mDaiBalance : mUsdcBalance;
+    allPromise
+      .then(async () => {
+        const daiBalance = await daiBalancePromise;
+        const usdcBalance = await usdcBalancePromise;
+        const daiAllowance = await daiAllowancePromise;
+        const usdcAllowance = await usdcAllowancePromise;
+        const mDaiBalance = await mDaiBalancePromise;
+        const mUsdcBalance = await mUsdcBalancePromise;
 
-    const underlyingAllowance = isDAI ? daiAllowance : usdcAllowance;
-    const dmmAllowance = new BN('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'hex');
+        const isDAI = underlyingToken.symbol === DAI.symbol;
 
-    this.setState({
-      dmmAllowance,
-      dmmBalance,
-      underlyingAllowance,
-      underlyingBalance,
-      mDaiExchangeRate,
-      mUsdcExchangeRate,
-      daiAllowance,
-      usdcAllowance,
-      daiBalance,
-      usdcBalance,
-      mDaiBalance,
-      mUsdcBalance,
-      mDaiToken,
-      mUsdcToken,
-      mDaiActiveSupply,
-      mUsdcActiveSupply,
-      mDaiTotalSupply,
-      mUsdcTotalSupply,
-      activeSupply: isDAI ? mDaiActiveSupply : mUsdcActiveSupply,
-      totalSupply: isDAI ? mDaiTotalSupply : mUsdcTotalSupply,
-      totalTokensPurchased,
-    });
+        const underlyingBalance = isDAI ? daiBalance : usdcBalance;
+        const dmmBalance = isDAI ? mDaiBalance : mUsdcBalance;
+
+        const underlyingAllowance = isDAI ? daiAllowance : usdcAllowance;
+        const dmmAllowance = new BN('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'hex');
+
+        this.setState({
+          dmmAllowance,
+          dmmBalance,
+          underlyingAllowance,
+          underlyingBalance,
+          daiAllowance,
+          usdcAllowance,
+          daiBalance,
+          usdcBalance,
+          mDaiBalance,
+          mUsdcBalance,
+          mDaiToken,
+          mUsdcToken,
+        });
+      })
+      .catch(() => {
+        new Promise((resolve) => {
+          const delayInMillis = 200;
+          setTimeout(() => resolve.bind(null), delayInMillis);
+        }).then(() => this.loadWeb3Data(retryCount + 1));
+      });
   };
 
   loadWallet = () => {

@@ -33,7 +33,7 @@ class TopSection extends React.Component {
           <div className={styles.rightStat}>
             {/* 0.0000001981862 per second */}
             <div className={styles.aprWrapper}>
-              Earning 6.25% APR
+              Earning 6.25% APY
             </div>
             <div className={styles.daiSection}>
               <div className={styles.usdToDmm}>
