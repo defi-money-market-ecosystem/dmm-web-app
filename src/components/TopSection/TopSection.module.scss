@@ -2,7 +2,7 @@
 .TopBar {
   padding-top: 80px;
   /*background: #deeeff;*/
-  background: linear-gradient(360deg,#327ccb,#4f94de 5%,#8bbbef 15%,#bdddff 25%,#deeeff 40%);
+  background: linear-gradient(360deg, #327ccb, #4f94de 5%, #8bbbef 15%, #bdddff 25%, #deeeff 40%);
 }
 
 .totalTokensPurchasedLoader {
@@ -66,70 +66,108 @@
 }
 
 @-webkit-keyframes fadeAnimation {
-  0%   { opacity: 0; }
-  4%   { opacity: 1; }
-  50%  { opacity: 1; }
-  54%  { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
+
 @-moz-keyframes fadeAnimation {
-  0%   { opacity: 0; }
-  4%   { opacity: 1; }
-  50%  { opacity: 1; }
-  54%  { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
+
 @-o-keyframes fadeAnimation {
-  0%   { opacity: 0; }
-  4%   { opacity: 1; }
-  50%  { opacity: 1; }
-  54%  { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
+
 @keyframes fadeAnimation {
-  0%   { opacity: 0; }
-  4%   { opacity: 1; }
-  50%  { opacity: 1; }
-  54%  { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .daiInterestRate,
+.ethInterestRate,
 .usdcInterestRate {
   font-weight: 500;
   font-size: 0.9em;
 }
 
-.daiInterestRate {
-  /*-webkit-animation: fadeAnimation 8s 4s infinite; /* Safari 4+ */
-  /*-moz-animation:    fadeAnimation 8s 4s infinite; /* Fx 4+ */
-  /*-o-animation:      fadeAnimation 8s 4s infinite; /* Opera 12+ */
-  /*animation:         fadeAnimation 8s 4s infinite; /* IE 10+, Fx 29+ */
-  /*opacity: 0;*/
-}
-
-.usdcInterestRate {
-  margin-top: -40px;
-  /*-webkit-animation: fadeAnimation 8s infinite; /* Safari 4+ */
-  /*-moz-animation:    fadeAnimation 8s infinite; /* Fx 5+ */
-  /*-o-animation:      fadeAnimation 8s infinite; /* Opera 12+ */
-  /*animation:         fadeAnimation 8s infinite; /* IE 10+, Fx 29+ */
-}
-
 .daiSection {
-  -webkit-animation: fadeAnimation 16s infinite; /* Safari 4+ */
-  -moz-animation:    fadeAnimation 16s infinite; /* Fx 4+ */
-  -o-animation:      fadeAnimation 16s infinite; /* Opera 12+ */
-  animation:         fadeAnimation 16s infinite; /* IE 10+, Fx 29+ */
+  position: absolute;
+  -webkit-animation: fadeAnimation 24s infinite; /* Safari 4+ */
+  -moz-animation: fadeAnimation 24s infinite; /* Fx 4+ */
+  -o-animation: fadeAnimation 24s infinite; /* Opera 12+ */
+  animation: fadeAnimation 24s infinite; /* IE 10+, Fx 29+ */
+}
+
+.ethSection {
+  opacity: 0;
+  position: absolute;
+  -webkit-animation: fadeAnimation 24s 8s infinite; /* Safari 4+ */
+  -moz-animation: fadeAnimation 24s 8s infinite; /* Fx 4+ */
+  -o-animation: fadeAnimation 24s 8s infinite; /* Opera 12+ */
+  animation: fadeAnimation 24s 8s infinite; /* IE 10+, Fx 29+ */
 }
 
 .usdcSection {
-  margin-top: -52px;
   opacity: 0;
-  -webkit-animation: fadeAnimation 16s 8s infinite; /* Safari 4+ */
-  -moz-animation:    fadeAnimation 16s 8s infinite; /* Fx 5+ */
-  -o-animation:      fadeAnimation 16s 8s infinite; /* Opera 12+ */
-  animation:         fadeAnimation 16s 8s infinite; /* IE 10+, Fx 29+ */
+  position: absolute;
+  -webkit-animation: fadeAnimation 24s 16s infinite; /* Safari 4+ */
+  -moz-animation: fadeAnimation 24s 16s infinite; /* Fx 5+ */
+  -o-animation: fadeAnimation 24s 16s infinite; /* Opera 12+ */
+  animation: fadeAnimation 24s 16s infinite; /* IE 10+, Fx 29+ */
 }
 
 .arrow {
@@ -165,13 +203,11 @@
     font-size: 2.3em;
   }
 
-  .daiInterestRate {
+  .daiInterestRate,
+  .ethInterestRate,
+  .usdcInterestRate, {
     font-size: 0.9em;
     line-height: 1.4em;
-  }
-
-  .usdcSection {
-    margin-top: -44px;
   }
 }
 
@@ -231,13 +267,11 @@
     margin-bottom: -5px;
   }
 
-  .daiInterestRate {
+  .daiInterestRate,
+  .ethInterestRate,
+  .usdcInterestRate, {
     font-size: 0.8em;
     line-height: 1.4em;
-  }
-
-  .usdcSection {
-    margin-top: -40px;
   }
 }
 
@@ -266,13 +300,11 @@
     font-size: 1.6em;
   }
 
-  .daiInterestRate {
+  .daiInterestRate,
+  .ethInterestRate,
+  .usdcInterestRate, {
     font-size: 0.8em;
     line-height: 1.3em;
-  }
-
-  .usdcSection {
-    margin-top: -36px;
   }
 }
 

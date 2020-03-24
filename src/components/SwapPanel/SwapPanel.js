@@ -4,14 +4,13 @@ import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import {humanize} from "../../utils/NumberUtil";
+import NumberUtil, {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
 import styles from './SwapPanel.module.scss';
-import NumberUtil, {fromDecimalToBN} from "../../utils/NumberUtil";
 
 const theme = createMuiTheme({
   palette: {
@@ -372,7 +371,8 @@ class SwapPanel extends React.Component {
                   </Button>
                 </Tooltip>
               ) : (
-                <Tooltip title={this.props.isWaitingForSignature ? 'Awaiting signature from wallet' : `Waiting for your assets to ${isMinting ? 'mint' : 'redeem'}.`}>
+                <Tooltip
+                  title={this.props.isWaitingForSignature ? 'Awaiting signature from wallet' : `Waiting for your assets to ${isMinting ? 'mint' : 'redeem'}.`}>
                   <Button className={`${styles.submitButton} ${styles.loading}`} disabled={false}>
                     <CircularProgress color={'primary'}/> {this.props.isMinting ? "Minting" : "Redeeming"}
                   </Button>

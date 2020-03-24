@@ -42,16 +42,12 @@ class Swapper extends React.Component {
           disabled={!isWalletLoaded}
         />
         <BalancesPanel
-          daiBalance={this.props.daiBalance}
-          usdcBalance={this.props.usdcBalance}
-          mDaiBalance={this.props.mDaiBalance}
-          mUsdcBalance={this.props.mUsdcBalance}
+          symbolToUnderlyingBalanceMap={this.props.symbolToUnderlyingBalanceMap}
+          symbolToDmmBalanceMap={this.props.symbolToDmmBalanceMap}
           dmmToken={this.props.dmmToken}
           underlyingToken={this.props.underlyingToken}
-          mDaiToken={this.props.mDaiToken}
-          mUsdcToken={this.props.mUsdcToken}
-          mDaiExchangeRate={this.props.mDaiExchangeRate}
-          mUsdcExchangeRate={this.props.mUsdcExchangeRate}
+          dmmTokensMap={this.props.dmmTokensMap}
+          symbolToExchangeRateMap={this.props.symbolToExchangeRateMap}
           disabled={!isWalletLoaded}
           isLoading={this.props.isLoadingBalances}
         />

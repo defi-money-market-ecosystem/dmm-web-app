@@ -2,8 +2,8 @@
 
 .SwapPanel {
   width: 46%;
+  height: 325px;
   margin: 2%;
-  /*height: 250px;*/
   display: inline-block;
   box-shadow: rgba(0,0,0,0.5) 1px 1px 8px -4px, rgba(0,0,0,0.5) 1px 1px 4px -4px;
   -webkit-border-radius: 5px;
@@ -17,7 +17,6 @@
   -ms-transition: opacity 0.5s ease-in-out;
   -o-transition: opacity 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
-  height: fit-content;
   padding: 13px 0 20px;
 }
 

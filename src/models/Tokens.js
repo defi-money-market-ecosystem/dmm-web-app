@@ -27,13 +27,14 @@ export const USDC = new Token(
 
 export const WETH = new Token(
   process.env.REACT_APP_WETH_ADDRESS,
-  "Wrapped Ether",
-  "WETH",
+  "Ether",
+  "ETH",
   18,
   "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png"
 );
 
-export const tokens = [DAI, USDC, WETH];
+// Put WETH first because we alphabetize it by symbol
+export const tokens = [DAI, WETH, USDC];
 
 export const tokenAddressToTokenMap = tokens.reduce((map, token) => {
   map[token.address] = token;

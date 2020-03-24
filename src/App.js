@@ -12,13 +12,14 @@ import NumberUtil, {BN} from "./utils/NumberUtil";
 import ERC20Service from "./services/ERC20Service";
 import DmmTokenService from "./services/DmmTokenService";
 
-import {DAI, USDC} from "./models/Tokens";
+import {tokenAddressToTokenMap, tokens, USDC} from "./models/Tokens";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {fab} from '@fortawesome/free-brands-svg-icons';
+import {asyncForEach} from "./utils/ArrayUtil";
 
 library.add(fab);
 
@@ -28,6 +29,7 @@ class App extends React.Component {
 
     this.state = {
       counter: 0,
+      tokens: tokens,
       underlyingAllowance: NumberUtil._0,
       exchangeRate: null,
       mDaiExchangeRate: null,
@@ -42,16 +44,9 @@ class App extends React.Component {
       dmmToken: null,
       isWaitingForApprovalToMine: false,
       dmmTokensMap: null,
-      daiBalance: NumberUtil._0,
-      usdcBalance: NumberUtil._0,
-      mDaiBalance: NumberUtil._0,
-      mUsdcBalance: NumberUtil._0,
-      mDaiToken: null,
-      mUsdcToken: null,
       activeSupply: NumberUtil._0,
       totalSupply: NumberUtil._0,
       totalTokensPurchased: NumberUtil._0,
-      tokens: [DAI, USDC],
     };
 
     this.pollForData().then(() => {
@@ -112,8 +107,6 @@ class App extends React.Component {
 
     const allowance = this.state.isMinting ? this.state.underlyingAllowance : this.state.dmmAllowance;
 
-    //console.log("Allowance ", allowance.toString());
-
     this.setState({
       isWaitingForSignature: true,
     });
@@ -162,12 +155,14 @@ class App extends React.Component {
       // If the allowance setting failed. Don't go any further.
       this.setState({
         isWaitingForSignature: false,
+        isWaitingForApprovalToMine: false,
       });
       return;
     }
 
     this.setState({
       isWaitingForSignature: true,
+      isWaitingForApprovalToMine: false,
     });
 
     const receiptPromise = this.state.isMinting ?
@@ -181,12 +176,14 @@ class App extends React.Component {
         // This is purposefully NOT awaited. It's a "side-effect" promise
         DmmTokenService.addNewTokensToTotalTokensPurchased(transactionHash);
         this.setState({
+          isWaitingForSignature: false,
           isWaitingForActionToMine: true,
         });
         return transactionHash;
       })
       .then(async () => {
         this.setState({
+          isWaitingForSignature: false,
           isWaitingForActionToMine: false,
         });
         await this.pollForData();
@@ -195,6 +192,7 @@ class App extends React.Component {
       .catch(error => {
         if (error.code === 4001) {
           this.setState({
+            isWaitingForSignature: false,
             isWaitingForActionToMine: false,
             snackMessage: 'The transaction was cancelled',
           });
@@ -202,6 +200,7 @@ class App extends React.Component {
         } else {
           console.error("Mint error: ", error);
           this.setState({
+            isWaitingForSignature: false,
             isWaitingForActionToMine: false,
             unknownError: 'An unknown error occurred while interacting with DMM',
           });
@@ -211,6 +210,7 @@ class App extends React.Component {
 
     this.setState({
       isWaitingForSignature: false,
+      isWaitingForActionToMine: false,
       value: isSuccessful ? "" : this.state.value,
     });
   };
@@ -243,33 +243,34 @@ class App extends React.Component {
     });
 
     const totalTokensPurchasedPromise = DmmTokenService.getTotalTokensPurchased();
-    const mDaiExchangeRatePromise = DmmTokenService.getExchangeRate(this.state.dmmTokensMap[DAI.address.toLowerCase()].dmmTokenId);
-    const mUsdcExchangeRatePromise = DmmTokenService.getExchangeRate(this.state.dmmTokensMap[USDC.address.toLowerCase()].dmmTokenId);
-    const mDaiActiveSupplyPromise = DmmTokenService.getActiveSupply(this.state.dmmTokensMap[DAI.address.toLowerCase()]);
-    const mUsdcActiveSupplyPromise = DmmTokenService.getActiveSupply(this.state.dmmTokensMap[USDC.address.toLowerCase()]);
-    const mDaiTotalSupplyPromise = DmmTokenService.getTotalSupply(this.state.dmmTokensMap[DAI.address.toLowerCase()]);
-    const mUsdcTotalSupplyPromise = DmmTokenService.getTotalSupply(this.state.dmmTokensMap[USDC.address.toLowerCase()]);
+    const tokenValuesPromises = Object.values(this.state.dmmTokensMap).map(token => {
+      const mActiveSupplyPromise = DmmTokenService.getActiveSupply(token);
+      const mExchangeRatePromise = DmmTokenService.getExchangeRate(token.dmmTokenId);
+      const mTotalSupplyPromise = DmmTokenService.getTotalSupply(token);
+      return Promise.all([mActiveSupplyPromise, mExchangeRatePromise, mTotalSupplyPromise]);
+    });
+    // maps to [[activeSupply, exchangeRate, totalSupply]]
+    const tokenValues = await Promise.all(tokenValuesPromises.map(async promise => await promise));
+    const symbolToActiveSupplyMap = {};
+    const symbolToExchangeRateMap = {};
+    const symbolToTotalSupplyMap = {};
+
+    await asyncForEach(Object.values(this.state.dmmTokensMap), (token, index) => {
+      symbolToActiveSupplyMap[token.symbol] = tokenValues[index][0];
+      symbolToExchangeRateMap[token.symbol] = tokenValues[index][1];
+      symbolToTotalSupplyMap[token.symbol] = tokenValues[index][2];
+    });
 
     const totalTokensPurchased = await totalTokensPurchasedPromise;
-    const mDaiExchangeRate = await mDaiExchangeRatePromise;
-    const mUsdcExchangeRate = await mUsdcExchangeRatePromise;
-    const mDaiActiveSupply = await mDaiActiveSupplyPromise;
-    const mUsdcActiveSupply = await mUsdcActiveSupplyPromise;
-    const mDaiTotalSupply = await mDaiTotalSupplyPromise;
-    const mUsdcTotalSupply = await mUsdcTotalSupplyPromise;
 
-    const isDAI = this.state.underlyingToken.symbol === DAI.symbol;
-    const exchangeRate = isDAI ? mDaiExchangeRate : mUsdcExchangeRate;
+    const dmmTokenSymbol = this.state.dmmToken.symbol;
     this.setState({
-      exchangeRate,
-      mDaiExchangeRate,
-      mUsdcExchangeRate,
-      mDaiActiveSupply,
-      mUsdcActiveSupply,
-      mDaiTotalSupply,
-      mUsdcTotalSupply,
-      activeSupply: isDAI ? mDaiActiveSupply : mUsdcActiveSupply,
-      totalSupply: isDAI ? mDaiTotalSupply : mUsdcTotalSupply,
+      symbolToActiveSupplyMap,
+      symbolToExchangeRateMap,
+      symbolToTotalSupplyMap,
+      activeSupply: symbolToActiveSupplyMap[dmmTokenSymbol],
+      exchangeRate: symbolToExchangeRateMap[dmmTokenSymbol],
+      totalSupply: symbolToTotalSupplyMap[dmmTokenSymbol],
       totalTokensPurchased,
     });
 
@@ -283,69 +284,59 @@ class App extends React.Component {
     }
   };
 
-  loadWeb3Data = async (retryCount) => {
+  loadWeb3Data = async (retryCount, mostRecentError) => {
     if (retryCount === 5) {
-      return Promise.reject("Too many retries");
+      return Promise.reject(mostRecentError);
     }
 
-    const underlyingToken = this.state.underlyingToken;
+    const dmmTokens = Object.values(this.state.dmmTokensMap);
+    const tokenValuesPromises = dmmTokens.map(dmmToken => {
+      const underlyingToken = tokenAddressToTokenMap[dmmToken.underlyingTokenAddress.toLowerCase()];
+      const tokenAllowancePromise = this.getAllowance(underlyingToken);
+      const underlyingTokenBalancePromise = this.getBalance(underlyingToken);
+      const dmmTokenBalancePromise = this.getBalance(dmmToken);
+      return Promise.all([tokenAllowancePromise, underlyingTokenBalancePromise, dmmTokenBalancePromise]);
+    });
 
-    const mDaiToken = this.state.dmmTokensMap[DAI.address.toLowerCase()];
-    const mUsdcToken = this.state.dmmTokensMap[USDC.address.toLowerCase()];
+    Promise.all(tokenValuesPromises)
+      .then(async tokenValues => {
+        const symbolToUnderlyingAllowanceMap = {};
+        const symbolToDmmAllowanceMap = {};
+        const symbolToUnderlyingBalanceMap = {};
+        const symbolToDmmBalanceMap = {};
 
-    const daiBalancePromise = this.getBalance(DAI);
-    const usdcBalancePromise = this.getBalance(USDC);
-    const daiAllowancePromise = this.getAllowance(DAI, mDaiToken);
-    const usdcAllowancePromise = this.getAllowance(USDC, mUsdcToken);
-    const mDaiBalancePromise = this.getBalance(this.state.dmmTokensMap[DAI.address.toLowerCase()]);
-    const mUsdcBalancePromise = this.getBalance(this.state.dmmTokensMap[USDC.address.toLowerCase()]);
+        await asyncForEach(tokenValues, async (tokenValue, index) => {
+          const symbol = tokenAddressToTokenMap[dmmTokens[index].underlyingTokenAddress].symbol;
+          symbolToUnderlyingAllowanceMap[symbol] = await tokenValue[0];
+          symbolToDmmAllowanceMap[symbol] = new BN('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'hex');
+          symbolToUnderlyingBalanceMap[symbol] = await tokenValue[1];
+          symbolToDmmBalanceMap[symbol] = await tokenValue[2];
+        });
 
-    const allPromise = Promise.all([
-      daiBalancePromise,
-      usdcBalancePromise,
-      daiAllowancePromise,
-      usdcAllowancePromise,
-      mDaiBalancePromise,
-      mUsdcBalancePromise,
-    ]);
+        const underlyingTokenSymbol = this.state.underlyingToken.symbol;
 
-    allPromise
-      .then(async () => {
-        const daiBalance = await daiBalancePromise;
-        const usdcBalance = await usdcBalancePromise;
-        const daiAllowance = await daiAllowancePromise;
-        const usdcAllowance = await usdcAllowancePromise;
-        const mDaiBalance = await mDaiBalancePromise;
-        const mUsdcBalance = await mUsdcBalancePromise;
+        const underlyingBalance = symbolToUnderlyingBalanceMap[underlyingTokenSymbol];
+        const dmmBalance = symbolToDmmBalanceMap[underlyingTokenSymbol];
 
-        const isDAI = underlyingToken.symbol === DAI.symbol;
-
-        const underlyingBalance = isDAI ? daiBalance : usdcBalance;
-        const dmmBalance = isDAI ? mDaiBalance : mUsdcBalance;
-
-        const underlyingAllowance = isDAI ? daiAllowance : usdcAllowance;
-        const dmmAllowance = new BN('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'hex');
+        const underlyingAllowance = symbolToUnderlyingAllowanceMap[underlyingTokenSymbol];
+        const dmmAllowance = symbolToDmmAllowanceMap[underlyingTokenSymbol];
 
         this.setState({
           dmmAllowance,
           dmmBalance,
           underlyingAllowance,
           underlyingBalance,
-          daiAllowance,
-          usdcAllowance,
-          daiBalance,
-          usdcBalance,
-          mDaiBalance,
-          mUsdcBalance,
-          mDaiToken,
-          mUsdcToken,
+          symbolToUnderlyingAllowanceMap,
+          symbolToUnderlyingBalanceMap,
+          symbolToDmmAllowanceMap,
+          symbolToDmmBalanceMap,
         });
       })
-      .catch(() => {
+      .catch(error => {
         new Promise((resolve) => {
           const delayInMillis = 200;
           setTimeout(() => resolve.bind(null), delayInMillis);
-        }).then(() => this.loadWeb3Data(retryCount + 1));
+        }).then(() => this.loadWeb3Data(retryCount + 1, error));
       });
   };
 
@@ -373,15 +364,16 @@ class App extends React.Component {
   };
 
   render() {
+    const underlyingSymbol = this.state.underlyingToken.symbol;
     return (
       <>
         <DmmToolbar
           loadWallet={() => this.loadWallet()}
         />
         <TopSection
-          daiRate={this.state.mDaiExchangeRate}
-          usdcRate={this.state.mUsdcExchangeRate}
+          symbolToExchangeRateMap={this.state.symbolToExchangeRateMap}
           totalTokensPurchased={this.state.totalTokensPurchased}
+          tokens={this.state.tokens}
         />
         <div className={styles.App}>
           <Swapper
@@ -391,8 +383,6 @@ class App extends React.Component {
             underlyingToken={this.state.underlyingToken}
             underlyingAllowance={this.state.underlyingAllowance}
             underlyingBalance={this.state.underlyingBalance}
-            mDaiExchangeRate={this.state.mDaiExchangeRate}
-            mUsdcExchangeRate={this.state.mUsdcExchangeRate}
             isLoading={this.state.isLoading}
             isMinting={this.state.isMinting}
             isUnlocked={this.state.isUnlocked}
@@ -403,16 +393,16 @@ class App extends React.Component {
             updateUnderlying={(newTicker) => {
               const underlyingToken = this.state.tokens.find(token => token.symbol === newTicker);
               const dmmToken = this.state.dmmTokensMap[underlyingToken.address.toLowerCase()];
-              const isDAI = underlyingToken.symbol === DAI.symbol;
+              const underlyingTokenSymbol = underlyingToken.symbol;
 
-              const underlyingBalance = isDAI ? this.state.daiBalance : this.state.usdcBalance;
-              const dmmBalance = isDAI ? this.state.mDaiBalance : this.state.mUsdcBalance;
+              const underlyingBalance = this.state.symbolToUnderlyingBalanceMap[underlyingTokenSymbol];
+              const dmmBalance = this.state.symbolToDmmBalanceMap[underlyingTokenSymbol];
 
               // DMM allowance isn't needed for redeeming, so we don't check/change it here.
-              const underlyingAllowance = isDAI ? this.state.daiAllowance : this.state.usdcAllowance;
-              const exchangeRate = isDAI ? this.state.mDaiExchangeRate : this.state.mUsdcExchangeRate;
-              const activeSupply = isDAI ? this.state.mDaiActiveSupply : this.state.mUsdcActiveSupply;
-              const totalSupply = isDAI ? this.state.mDaiTotalSupply : this.state.mUsdcTotalSupply;
+              const underlyingAllowance = this.state.symbolToUnderlyingAllowanceMap[underlyingTokenSymbol];
+              const exchangeRate = this.state.symbolToExchangeRateMap[dmmToken.symbol];
+              const activeSupply = this.state.symbolToActiveSupplyMap[dmmToken.symbol];
+              const totalSupply = this.state.symbolToTotalSupplyMap[dmmToken.symbol];
 
               this.setState({
                 underlyingToken,
@@ -427,19 +417,15 @@ class App extends React.Component {
             }}
             updateValue={(val) => this.setState({inputValue: val})}
             setIsMinting={(val) => this.setState({isMinting: val})}
-            exchangeRate={this.state.underlyingToken.symbol === DAI.symbol ? this.state.mDaiExchangeRate : this.state.mUsdcExchangeRate}
-            daiBalance={this.state.daiBalance}
-            usdcBalance={this.state.usdcBalance}
-            mDaiBalance={this.state.mDaiBalance}
-            mUsdcBalance={this.state.mUsdcBalance}
-            mDaiToken={this.state.mDaiToken}
-            mUsdcToken={this.state.mUsdcToken}
+            exchangeRate={this.state.exchangeRate}
+            symbolToUnderlyingBalanceMap={this.state.symbolToUnderlyingBalanceMap}
+            symbolToDmmBalanceMap={this.state.symbolToDmmBalanceMap}
+            dmmTokensMap={this.state.dmmTokensMap}
             activeSupply={this.state.activeSupply}
             totalSupply={this.state.totalSupply}
             tokens={this.state.tokens}
             isLoadingBalances={this.state.isLoadingBalances}
-            daiRate={this.state.mDaiExchangeRate}
-            usdcRate={this.state.mUsdcExchangeRate}
+            symbolToExchangeRateMap={this.state.symbolToExchangeRateMap}
           />
         </div>
         <Snackbar open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}
