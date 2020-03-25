@@ -8,10 +8,6 @@ import {CircularProgress} from "@material-ui/core";
 
 class BalancesPanel extends React.Component {
 
-  constructor(props) {
-    super(props);
-  }
-
   mAssetToUnderlyingValueAndLocalize(mAsset, amountBN) {
     // For right now, just return the mAsset to exchange rate value. In the future, like with mETH, we'll need to
     // convert ETH to dollars.
@@ -60,7 +56,7 @@ class BalancesPanel extends React.Component {
               {underlyingAsset.symbol}
             </div>
             <div className={styles.amount}>
-              {underlyingBalance ? parseFloat(humanize(underlyingBalance, underlyingAsset.decimals)).toLocaleString("en-US", {minimumFractionDigits: decimals}) : 0}
+              {humanize(underlyingBalance, underlyingAsset.decimals, decimals, true, decimals)}
             </div>
           </div>
           <div className={styles.balanceRow}>
@@ -68,7 +64,7 @@ class BalancesPanel extends React.Component {
               m{underlyingAsset.symbol}
             </div>
             <div className={styles.amount}>
-              {mBalance ? parseFloat(humanize(mBalance, underlyingAsset.decimals)).toLocaleString("en-US", {minimumFractionDigits: decimals}) : 0}
+              {humanize(mBalance, underlyingAsset.decimals, decimals, true, decimals)}
               <span className={styles.underlyingValue}>
                 &nbsp;({mAsset ? this.mAssetToUnderlyingValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
               </span>

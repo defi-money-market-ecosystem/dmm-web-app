@@ -11,7 +11,7 @@ export const MAX_UINT256 = new BN('2').pow(new BN('256')).sub(new BN('1'));
 export const MAX_INT256 = new BN('2').pow(new BN('255')).sub(new BN('1'));
 export const MIN_INT256 = new BN('2').pow(new BN('255')).mul(new BN('-1'));
 
-export const humanize = (bn, bnPrecision, targetPrecision, format) => {
+export const humanize = (bn, bnPrecision, targetPrecision, format, minDecimals) => {
   if (typeof bn === 'number') {
     bn = new BN(bn);
   } else if (typeof bn === 'string') {
@@ -56,6 +56,7 @@ export const humanize = (bn, bnPrecision, targetPrecision, format) => {
   if (format) {
     return parseFloat(decimalString).toLocaleString("en-US", {
       maximumFractionDigits: targetPrecision,
+      minimumFractionDigits: minDecimals || 0,
       useGrouping: true,
     });
   } else {

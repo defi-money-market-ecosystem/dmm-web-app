@@ -185,7 +185,8 @@
 .underlyingSelector.expanded {
   background: #ebedf3;
   border-bottom-left-radius: 4px;
-  height: 80px;
+  //height: 80px;
+  height: fit-content;
   margin-bottom: -40px;
 }
 
@@ -353,6 +354,7 @@ button:focus {
 @media (max-width: 550px) {
   .SwapPanel {
     width: 95%;
+    height: fit-content;
   }
 
   .underlyingSection,

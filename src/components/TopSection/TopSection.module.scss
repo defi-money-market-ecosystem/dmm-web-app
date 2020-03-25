@@ -1,7 +1,6 @@
 
 .TopBar {
   padding-top: 80px;
-  /*background: #deeeff;*/
   background: linear-gradient(360deg, #327ccb, #4f94de 5%, #8bbbef 15%, #bdddff 25%, #deeeff 40%);
 }
 
@@ -45,7 +44,7 @@
 }
 
 .bigNum {
-  font-size: 6em;
+  font-size: 5em;
   line-height: 0.9em;
 }
 
@@ -145,6 +144,8 @@
 }
 
 .daiSection {
+  width: 100%;
+  text-align: center;
   position: absolute;
   -webkit-animation: fadeAnimation 24s infinite; /* Safari 4+ */
   -moz-animation: fadeAnimation 24s infinite; /* Fx 4+ */
@@ -154,6 +155,8 @@
 
 .ethSection {
   opacity: 0;
+  width: 100%;
+  text-align: center;
   position: absolute;
   -webkit-animation: fadeAnimation 24s 8s infinite; /* Safari 4+ */
   -moz-animation: fadeAnimation 24s 8s infinite; /* Fx 4+ */
@@ -163,6 +166,8 @@
 
 .usdcSection {
   opacity: 0;
+  width: 100%;
+  text-align: center;
   position: absolute;
   -webkit-animation: fadeAnimation 24s 16s infinite; /* Safari 4+ */
   -moz-animation: fadeAnimation 24s 16s infinite; /* Fx 5+ */
@@ -188,7 +193,7 @@
   }
 
   .bigNum {
-    font-size: 5em;
+    font-size: 4em;
   }
 
   .statSubtitle {
@@ -217,7 +222,7 @@
   }
 
   .bigNum {
-    font-size: 4.4em;
+    font-size: 3.6em;
   }
 
   .statSubtitle {
@@ -251,7 +256,7 @@
   }
 
   .bigNum {
-    font-size: 3.6em;
+    font-size: 3.3em;
   }
 
   .statSubtitle {
@@ -276,6 +281,10 @@
 }
 
 @media (max-width: 700px) {
+  .TopBar {
+    padding-bottom: 120px;
+  }
+
   .content {
     height: 820px;
   }
@@ -285,7 +294,7 @@
   }
 
   .bigNum {
-    font-size: 3.3em;
+    font-size: 3.0em;
   }
 
   .statSubtitle {
@@ -309,6 +318,22 @@
 }
 
 @media (max-width: 550px) {
+  .TopBar {
+    padding-bottom: 120px;
+  }
+
+  .daiSection {
+    right: 0;
+  }
+
+  .ethSection {
+    right: 0;
+  }
+
+  .usdcSection {
+    right: 0;
+  }
+
   .content {
     height: 1070px;
   }
@@ -326,7 +351,7 @@
   }
 
   .bigNum {
-    font-size: 16vw;
+    font-size: 14vw;
     font-weight: 400;
   }
 

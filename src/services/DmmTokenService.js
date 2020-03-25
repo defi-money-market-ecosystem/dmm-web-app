@@ -1,4 +1,5 @@
 import DmmToken from "../abi/DmmToken";
+import DmmEther from "../abi/DmmEther";
 import DmmWeb3Service from "./DmmWeb3Service";
 import NumberUtil from "../utils/NumberUtil";
 import Index from "./index";
@@ -79,6 +80,11 @@ class DmmTokenService {
   static mint(dmmTokenAddress, owner, underlyingAmount) {
     const dmmToken = new DmmWeb3Service.instance.web3.eth.Contract(DmmToken, dmmTokenAddress);
     return dmmToken.methods.mint(underlyingAmount.toString(10)).send({from: owner});
+  }
+
+  static mintViaEther(dmmTokenAddress, owner, underlyingAmount) {
+    const dmmToken = new DmmWeb3Service.instance.web3.eth.Contract(DmmEther, dmmTokenAddress);
+    return dmmToken.methods.mintViaEther().send({from: owner, value: underlyingAmount.toString(10)});
   }
 
   static redeem(dmmTokenAddress, owner, dmmAmount) {

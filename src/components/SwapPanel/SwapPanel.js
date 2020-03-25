@@ -52,7 +52,6 @@ class SwapPanel extends React.Component {
       isInitialLoad: true,
       inputError: null,
     });
-    // this.onInputAmountChange(humanize(NumberUtil._0));
   };
 
   underlyingTokenDecimals = () => this.props.underlyingToken.decimals;
@@ -82,8 +81,8 @@ class SwapPanel extends React.Component {
     this.setState({
       underlyingValue: newFormattedAmount,
       underlyingAmount: isInvalid ? NumberUtil._0 : fromDecimalToBN(parseFloat(newAmount), decimals),
-      dmmValue: isInvalid ? '0' : humanize(dmmAmount, decimals, Math.min(8, decimals), true),
-      dmmAmount: isInvalid ? NumberUtil._0 : dmmAmount,
+      dmmValue: humanize(dmmAmount, decimals, Math.min(8, decimals), true),
+      dmmAmount: dmmAmount,
       lastSelected: UNDERLYING,
     });
 
@@ -135,7 +134,6 @@ class SwapPanel extends React.Component {
           underlyingValue: humanize(underlyingAmount, this.underlyingTokenDecimals(), undefined, true),
           underlyingAmount: underlyingAmount,
         });
-        !this.state.inputError && this.props.updateValue(this.state.dmmAmount.mul(this.props.exchangeRate).div(NumberUtil._1));
       }
     }
   }
@@ -169,7 +167,7 @@ class SwapPanel extends React.Component {
     const maxDecimals = Math.min(underlyingToken.decimals, 8);
     if (value <= 0) {
       this.setState({
-        isInitialLoad: true//inputError: "Must be greater than 0"
+        isInitialLoad: true
       });
     } else if (value.toString().includes("e+")) {
       this.setState({
@@ -259,7 +257,7 @@ class SwapPanel extends React.Component {
                 {isMinting ? token.symbol : `m${token.symbol}`}
               </div>
             );
-          })}}
+          })}
         </div>
       </div>
     );
@@ -330,8 +328,8 @@ class SwapPanel extends React.Component {
           <div className={styles.helperText}>
             {
               this.props.isMinting ?
-                (<div>Mint your DAI and USDC into mDAI and mUSDC so it can earn interest.</div>) :
-                (<div>Redeem your mDAI and mUSDC back to DAI and USDC with interest.</div>)
+                (<div>Mint your tokens into mTokens so it can earn interest.</div>) :
+                (<div>Redeem your mTokens back to tokens with interest.</div>)
             }
           </div>
           <div className={styles.inputForm}>

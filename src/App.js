@@ -12,7 +12,7 @@ import NumberUtil, {BN} from "./utils/NumberUtil";
 import ERC20Service from "./services/ERC20Service";
 import DmmTokenService from "./services/DmmTokenService";
 
-import {tokenAddressToTokenMap, tokens, USDC} from "./models/Tokens";
+import {tokenAddressToTokenMap, tokens, WETH} from "./models/Tokens";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
@@ -37,7 +37,7 @@ class App extends React.Component {
       dmmAllowance: NumberUtil._0,
       underlyingBalance: NumberUtil._0,
       dmmBalance: NumberUtil._0,
-      underlyingToken: USDC,
+      underlyingToken: WETH,
       isMinting: true,
       inputValue: undefined,
       isLoading: false,
@@ -102,6 +102,7 @@ class App extends React.Component {
       return;
     }
 
+    const walletAddressLower = DmmWeb3Service.walletAddress().toLowerCase();
     const underlyingToken = this.state.underlyingToken;
     const dmmToken = this.state.dmmToken;
 
@@ -114,7 +115,7 @@ class App extends React.Component {
     let isSetupComplete = true;
     if (allowance.lt(this.state.inputValue)) {
       const tokenToApprove = this.state.isMinting ? underlyingToken : dmmToken;
-      isSetupComplete = await ERC20Service.approve(tokenToApprove.address, DmmWeb3Service.walletAddress(), dmmToken.address)
+      isSetupComplete = await ERC20Service.approve(tokenToApprove.address, walletAddressLower, dmmToken.address)
         .on('transactionHash', async transactionHash => {
           this.setState({
             isWaitingForSignature: false,
@@ -151,7 +152,7 @@ class App extends React.Component {
         });
     }
 
-    if (!isSetupComplete) {
+    if (!isSetupComplete || walletAddressLower !== DmmWeb3Service.walletAddress().toLowerCase()) {
       // If the allowance setting failed. Don't go any further.
       this.setState({
         isWaitingForSignature: false,
@@ -165,10 +166,16 @@ class App extends React.Component {
       isWaitingForApprovalToMine: false,
     });
 
-    const receiptPromise = this.state.isMinting ?
-      DmmTokenService.mint(dmmToken.address, DmmWeb3Service.walletAddress(), this.state.inputValue)
-      :
-      DmmTokenService.redeem(dmmToken.address, DmmWeb3Service.walletAddress(), this.state.inputValue);
+    let receiptPromise;
+    if (this.state.isMinting) {
+      if(dmmToken.underlyingTokenAddress.toLowerCase() === WETH.address.toLowerCase()) {
+        receiptPromise = DmmTokenService.mintViaEther(dmmToken.address, walletAddressLower, this.state.inputValue);
+      } else {
+        receiptPromise = DmmTokenService.mint(dmmToken.address, walletAddressLower, this.state.inputValue);
+      }
+    } else {
+      receiptPromise = DmmTokenService.redeem(dmmToken.address, walletAddressLower, this.state.inputValue);
+    }
 
     const isSuccessful = await receiptPromise
       .on('transactionHash', transactionHash => {
@@ -364,7 +371,6 @@ class App extends React.Component {
   };
 
   render() {
-    const underlyingSymbol = this.state.underlyingToken.symbol;
     return (
       <>
         <DmmToolbar
