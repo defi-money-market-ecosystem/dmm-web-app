@@ -288,23 +288,24 @@ class SwapPanel extends React.Component {
     const allowance = isMinting ? this.props.underlyingAllowance : this.props.dmmAllowance;
     const actionLeftInputView = this.getLeftSideInputField(isMinting);
     const actionRightInputView = this.getRightSideInputView(isMinting);
+    const dmmToken = this.props.dmmToken;
 
     let metadataSection;
-    if (this.props.dmmToken) {
-      const targetPrecision = this.props.dmmToken.underlyingTokenAddress === WETH.addressLower ? 2 : 0;
+    if (dmmToken) {
+      const targetPrecision = dmmToken.underlyingTokenAddress === WETH.addressLower ? 2 : 0;
       metadataSection = (
         <div className={styles.supplyWrapper}>
           <div className={`${styles.supply} ${styles.active}`}>
             <div className={styles.name}>Active supply:</div>
             <div className={styles.amount}>
               {humanize(this.props.activeSupply, 18, targetPrecision, true)}
-              <span className={styles.gray}>&nbsp;{this.props.dmmToken.symbol}</span></div>
+              <span className={styles.gray}>&nbsp;{dmmToken.symbol}</span></div>
           </div>
           <div className={`${styles.supply} ${styles.total}`}>
             <div className={styles.name}>Total supply:</div>
             <div className={styles.amount}>
               {humanize(this.props.totalSupply, 18, 0, true)}
-              <span className={styles.gray}>&nbsp;{this.props.dmmToken.symbol}</span>
+              <span className={styles.gray}>&nbsp;{dmmToken.symbol}</span>
             </div>
           </div>
         </div>
@@ -315,7 +316,7 @@ class SwapPanel extends React.Component {
 
     const actionButtonHelperTooltip = this.props.isWaitingForSignature ?
       'Awaiting signature from wallet' :
-      this.props.isWaitingForApprovalToMine ? `Your tokens are unlocking. After being unlocked, they can be used to mint ${this.props.dmmToken.symbol}`
+      this.props.isWaitingForApprovalToMine ? `Your tokens are unlocking. After being unlocked, they can be used to mint ${dmmToken.symbol}`
         : '';
 
     return (

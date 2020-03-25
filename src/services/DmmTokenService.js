@@ -1,7 +1,7 @@
 import DmmToken from "../abi/DmmToken";
 import DmmEther from "../abi/DmmEther";
 import DmmWeb3Service from "./DmmWeb3Service";
-import NumberUtil, {_1} from "../utils/NumberUtil";
+import NumberUtil from "../utils/NumberUtil";
 import Index from "./index";
 
 class DmmTokenService {
@@ -66,7 +66,7 @@ class DmmTokenService {
   }
 
   static convertNumberToWei(decimals, amountBN) {
-    if(decimals === 18) {
+    if (decimals === 18) {
       return amountBN;
     } else if (decimals > 18) {
       const diff = decimals - 18;
