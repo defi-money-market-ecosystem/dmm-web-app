@@ -23,7 +23,7 @@ class TopSection extends React.Component {
                 }
               </div>
               <div className={styles.statSubtitle}>
-                Worth of mTokens Purchased
+                Total Value of mTokens Purchased
               </div>
             </div>
           </div>

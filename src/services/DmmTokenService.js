@@ -35,7 +35,7 @@ class DmmTokenService {
       {headers: {'Accept': 'application/json'}},
     );
     const rawBN = new NumberUtil.BN((await response.json())["data"]["active_supply"]);
-    return DmmTokenService.convertNumberToWei(dmmToken.decimals, rawBN).add(_1);
+    return DmmTokenService.convertNumberToWei(dmmToken.decimals, rawBN);
   }
 
   static async getTotalSupply(dmmToken) {

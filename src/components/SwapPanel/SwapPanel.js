@@ -291,12 +291,13 @@ class SwapPanel extends React.Component {
 
     let metadataSection;
     if (this.props.dmmToken) {
+      const targetPrecision = this.props.dmmToken.underlyingTokenAddress === WETH.addressLower ? 2 : 0;
       metadataSection = (
         <div className={styles.supplyWrapper}>
           <div className={`${styles.supply} ${styles.active}`}>
             <div className={styles.name}>Active supply:</div>
             <div className={styles.amount}>
-              {humanize(this.props.activeSupply, 18, 0, true)}
+              {humanize(this.props.activeSupply, 18, targetPrecision, true)}
               <span className={styles.gray}>&nbsp;{this.props.dmmToken.symbol}</span></div>
           </div>
           <div className={`${styles.supply} ${styles.total}`}>
