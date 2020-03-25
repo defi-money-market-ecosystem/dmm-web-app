@@ -6,6 +6,7 @@ class Token {
     this.symbol = symbol;
     this.decimals = decimals;
     this.imageUrl = imageUrl;
+    this.addressLower = address.toLowerCase();
   }
 }
 

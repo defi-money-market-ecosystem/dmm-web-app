@@ -168,7 +168,7 @@ class App extends React.Component {
 
     let receiptPromise;
     if (this.state.isMinting) {
-      if(dmmToken.underlyingTokenAddress.toLowerCase() === WETH.address.toLowerCase()) {
+      if (dmmToken.underlyingTokenAddress.toLowerCase() === WETH.address.toLowerCase()) {
         receiptPromise = DmmTokenService.mintViaEther(dmmToken.address, walletAddressLower, this.state.inputValue);
       } else {
         receiptPromise = DmmTokenService.mint(dmmToken.address, walletAddressLower, this.state.inputValue);
@@ -179,7 +179,9 @@ class App extends React.Component {
 
     const isSuccessful = await receiptPromise
       .on('transactionHash', transactionHash => {
-        DmmWeb3Service.watchHash(transactionHash);
+        if (this.state.isMinting) {
+          DmmWeb3Service.watchHash(transactionHash);
+        }
         // This is purposefully NOT awaited. It's a "side-effect" promise
         DmmTokenService.addNewTokensToTotalTokensPurchased(transactionHash);
         this.setState({
@@ -299,7 +301,7 @@ class App extends React.Component {
     const dmmTokens = Object.values(this.state.dmmTokensMap);
     const tokenValuesPromises = dmmTokens.map(dmmToken => {
       const underlyingToken = tokenAddressToTokenMap[dmmToken.underlyingTokenAddress.toLowerCase()];
-      const tokenAllowancePromise = this.getAllowance(underlyingToken);
+      const tokenAllowancePromise = this.getAllowance(underlyingToken, dmmToken);
       const underlyingTokenBalancePromise = this.getBalance(underlyingToken);
       const dmmTokenBalancePromise = this.getBalance(dmmToken);
       return Promise.all([tokenAllowancePromise, underlyingTokenBalancePromise, dmmTokenBalancePromise]);

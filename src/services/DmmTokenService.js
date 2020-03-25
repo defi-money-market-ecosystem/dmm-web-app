@@ -1,7 +1,7 @@
 import DmmToken from "../abi/DmmToken";
 import DmmEther from "../abi/DmmEther";
 import DmmWeb3Service from "./DmmWeb3Service";
-import NumberUtil from "../utils/NumberUtil";
+import NumberUtil, {_1} from "../utils/NumberUtil";
 import Index from "./index";
 
 class DmmTokenService {
@@ -35,7 +35,7 @@ class DmmTokenService {
       {headers: {'Accept': 'application/json'}},
     );
     const rawBN = new NumberUtil.BN((await response.json())["data"]["active_supply"]);
-    return DmmTokenService.convertNumberToWei(dmmToken.decimals, rawBN);
+    return DmmTokenService.convertNumberToWei(dmmToken.decimals, rawBN).add(_1);
   }
 
   static async getTotalSupply(dmmToken) {

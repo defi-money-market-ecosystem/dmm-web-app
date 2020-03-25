@@ -5,6 +5,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import NumberUtil, {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
+import {WETH} from "../../models/Tokens";
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 
 import ArrowForward from '@material-ui/icons/ArrowForward';
@@ -168,6 +169,10 @@ class SwapPanel extends React.Component {
     if (value <= 0) {
       this.setState({
         isInitialLoad: true
+      });
+    } else if (value < 1 && this.props.isMinting && underlyingToken.address.toLowerCase() === WETH.addressLower) {
+      this.setState({
+        inputError: `Must be >= 1`
       });
     } else if (value.toString().includes("e+")) {
       this.setState({
