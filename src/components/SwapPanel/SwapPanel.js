@@ -250,19 +250,21 @@ class SwapPanel extends React.Component {
             }}>
             {isMinting ? this.props.underlyingToken.symbol : this.props.dmmToken.symbol}
           </div>
-          {this.props.tokens.filter(token => token.symbol !== this.props.underlyingToken.symbol).map(token => {
-            return (
-              <div
-                className={styles.underlyingOption}
-                onClick={(e) => {
-                  const targetedSymbol = isMinting ? e.target.innerHTML : e.target.innerHTML.substring(1);
-                  this.state.underlyingSelectorExpanded && this.setUnderlyingTicker(targetedSymbol);
-                  this.state.underlyingSelectorExpanded && e.stopPropagation();
-                }}>
-                {isMinting ? token.symbol : `m${token.symbol}`}
-              </div>
-            );
-          })}
+          <div>
+            {this.props.tokens.filter(token => token.symbol !== this.props.underlyingToken.symbol).map(token => {
+              return (
+                <div
+                  className={styles.underlyingOption}
+                  onClick={(e) => {
+                    const targetedSymbol = isMinting ? e.target.innerHTML : e.target.innerHTML.substring(1);
+                    this.state.underlyingSelectorExpanded && this.setUnderlyingTicker(targetedSymbol);
+                    this.state.underlyingSelectorExpanded && e.stopPropagation();
+                  }}>
+                  {isMinting ? token.symbol : `m${token.symbol}`}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );
