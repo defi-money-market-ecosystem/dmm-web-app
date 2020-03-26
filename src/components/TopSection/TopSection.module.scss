@@ -144,7 +144,7 @@
 }
 
 .daiSection {
-  width: 100%;
+  width: fit-content;
   text-align: center;
   position: absolute;
   -webkit-animation: fadeAnimation 24s infinite; /* Safari 4+ */
@@ -155,7 +155,7 @@
 
 .ethSection {
   opacity: 0;
-  width: 100%;
+  width: fit-content;
   text-align: center;
   position: absolute;
   -webkit-animation: fadeAnimation 24s 8s infinite; /* Safari 4+ */
@@ -166,7 +166,7 @@
 
 .usdcSection {
   opacity: 0;
-  width: 100%;
+  width: fit-content;
   text-align: center;
   position: absolute;
   -webkit-animation: fadeAnimation 24s 16s infinite; /* Safari 4+ */
@@ -298,7 +298,7 @@
   }
 
   .statSubtitle {
-    font-size: 1em;
+    font-size: 0.8em;
   }
 
   .rightStat {
@@ -311,7 +311,7 @@
 
   .daiInterestRate,
   .ethInterestRate,
-  .usdcInterestRate, {
+  .usdcInterestRate {
     font-size: 0.8em;
     line-height: 1.3em;
   }
@@ -322,16 +322,11 @@
     padding-bottom: 120px;
   }
 
-  .daiSection {
-    right: 0;
-  }
-
-  .ethSection {
-    right: 0;
-  }
-
+  .daiSection,
+  .ethSection,
   .usdcSection {
     right: 0;
+    width: 100%;
   }
 
   .content {
