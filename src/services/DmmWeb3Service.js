@@ -65,13 +65,13 @@ class DmmWeb3Service {
       </svg>`;
 
     const walletLinkExtension = {
-      name: 'Wallet Link',
+      name: 'WalletLink',
       svg: walletLinkSvg,
       wallet: async () => {
         const provider = walletLink.makeWeb3Provider(web3ProviderUrl, process.env.REACT_APP_NETWORK_ID);
         const web3 = new Web3(provider);
         const walletInterface = {
-          name: 'Wallet Link',
+          name: 'WalletLink',
           connect: async () => {
             const accounts = await provider.enable();
             web3.eth.defaultAccount = accounts[0];
