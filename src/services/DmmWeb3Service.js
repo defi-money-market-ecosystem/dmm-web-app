@@ -115,6 +115,7 @@ class DmmWeb3Service {
           {
             walletName: "trust",
             preferred: true,
+            label: 'Trust Wallet',
           },
           {
             walletName: "metamask",
