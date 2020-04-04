@@ -70,14 +70,41 @@ class DmmWeb3Service {
       wallet: async () => {
         const provider = walletLink.makeWeb3Provider(web3ProviderUrl, process.env.REACT_APP_NETWORK_ID);
         const web3 = new Web3(provider);
+        let isLoadingObj = {
+          promise: Promise.resolve(false)
+        };
         const walletInterface = {
           name: 'WalletLink',
           connect: async () => {
-            const accounts = await provider.enable();
+            isLoadingObj = {
+              promise: new Promise((resolve, reject) => {
+                isLoadingObj.resolve = resolve;
+                isLoadingObj.reject = reject;
+              }),
+            };
+            const accounts = await provider.enable()
+              .then(accounts => {
+                if (isLoadingObj.resolve) {
+                  isLoadingObj.resolve(true);
+                }
+                return accounts;
+              })
+              .catch(error => {
+                if (isLoadingObj.reject) {
+                  isLoadingObj.reject(error);
+                }
+                return Promise.reject(error);
+              });
             web3.eth.defaultAccount = accounts[0];
             return accounts;
           },
-          loading: async () => provider.enable(),
+          loading: async () => {
+            if (isLoadingObj && isLoadingObj.promise) {
+              await isLoadingObj.promise;
+            } else {
+              return Promise.resolve(true);
+            }
+          },
           disconnect: async () => {
             await walletLink.disconnect();
             web3.eth.defaultAccount = null;
