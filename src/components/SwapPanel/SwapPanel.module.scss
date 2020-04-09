@@ -381,6 +381,14 @@ button:focus {
   }
 }
 
+@media (max-height: 650px) {
+  @media (min-width: 650px) {
+    .SwapPanel {
+      height: 285px;
+    }
+  }
+}
+
 /*.inputRightSide {
   align-self: flex-end;
 }*/

@@ -374,7 +374,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <>
+      <div className={styles.appWrapper}>
         <DmmToolbar
           loadWallet={() => this.loadWallet()}
         />
@@ -435,6 +435,7 @@ class App extends React.Component {
             isLoadingBalances={this.state.isLoadingBalances}
             symbolToExchangeRateMap={this.state.symbolToExchangeRateMap}
           />
+          <Footer/>
         </div>
         <Snackbar open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}
                   autoHideDuration={5000}
@@ -444,8 +445,7 @@ class App extends React.Component {
             {this.state.snackError || this.state.unknownError || this.state.snackMessage}
           </Alert>
         </Snackbar>
-        <Footer/>
-      </>
+      </div>
     );
   }
 
