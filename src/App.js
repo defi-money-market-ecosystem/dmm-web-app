@@ -365,10 +365,11 @@ class App extends React.Component {
       .catch(error => {
         if (error.code !== 4001) {
           this.setState({
-            snackMessage: `There was an unknown error loading your wallet. Error Code: ${error.code}`
+            snackMessage: `There was an unknown error loading your wallet. Error Code: ${error.code || error}`
           });
         }
         this.setState({isLoading: false});
+        console.error('Found error ', error);
       })
   };
 
