@@ -387,9 +387,9 @@ class SwapPanel extends React.Component {
               )
             ) : (
               <Button
-                className={[styles.submitButton, (this.state.isInitialLoad || !!this.state.inputError) ? styles.submitButtonDisabled : '']}
+                className={[styles.submitButton, (this.state.isInitialLoad || !!this.state.inputError || this.state.underlyingValue === '0') ? styles.submitButtonDisabled : '']}
                 onClick={() => this.props.onDoOperation()}
-                disabled={!!this.state.inputError}>
+                disabled={!!this.state.inputError || this.state.underlyingValue === '0'}>
                 {this.props.isMinting ? "Mint" : "Redeem"}
               </Button>
             )}

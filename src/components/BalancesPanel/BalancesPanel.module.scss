@@ -89,3 +89,15 @@
     height: fit-content;
   }
 }
+
+@media (max-height: 650px) {
+  .BalancesPanel {
+    height: 285px;
+  }
+
+  .balanceRow {
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    font-size: 17px;
+  }
+}

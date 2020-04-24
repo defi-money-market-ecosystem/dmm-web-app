@@ -112,8 +112,26 @@
   }
 }
 
-@media (max-width: 550px) {
+/*@media (max-width: 550px) {
   .swapperWrapper {
     margin-top: -920px !important;
+  }
+}*/
+
+@media (max-height: 700px) {
+  .swapperWrapper {
+    margin-top: calc(-110vh + 310px) !important;
+  }
+
+  @media (max-width: 900px) {
+    .swapperWrapper {
+      margin-top: -750px !important;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .swapperWrapper {
+      margin-top: -920px !important;
+    }
   }
 }
