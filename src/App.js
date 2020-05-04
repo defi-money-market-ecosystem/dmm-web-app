@@ -353,7 +353,7 @@ class App extends React.Component {
     this.setState({isLoading: true});
     DmmWeb3Service.onboard.walletSelect()
       .then(result => {
-        if (result) {
+        if (result && typeof DmmWeb3Service.instance.wallet.connect === 'function') {
           return DmmWeb3Service.instance.wallet.connect();
         } else {
           return true;
@@ -363,9 +363,10 @@ class App extends React.Component {
         this.setState({isLoading: false});
       })
       .catch(error => {
-        if (error.code !== 4001) {
+        const metaMaskDenialErrorMessage = 'This dapp needs access to your account information.'
+        if (error.code !== 4001 && error.message !== metaMaskDenialErrorMessage) {
           this.setState({
-            snackMessage: `There was an unknown error loading your wallet. Error Code: ${error.code || error}`
+            snackMessage: `There was an unknown error loading your wallet. Error Code: ${error.code || Object.keys(error)}`
           });
         }
         this.setState({isLoading: false});
