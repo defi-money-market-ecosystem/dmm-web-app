@@ -12,7 +12,7 @@ class BalancesPanel extends React.Component {
     super(props);
     this.updateDimensions = this.updateDimensions.bind(this);
     this.state = {
-      width: 0,
+      width: window.innerWidth,
       lowerWidth: 540,
     }
   }
@@ -101,7 +101,7 @@ class BalancesPanel extends React.Component {
       );
     });
 
-    const heightPerToken = this.state.width > this.state.lowerWidth ? 90 : 112
+    const heightPerToken = this.state.width > this.state.lowerWidth ? 84 : 112
     const height = (tokens.length * heightPerToken) + 64
 
     return (
