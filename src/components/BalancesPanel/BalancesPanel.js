@@ -1,12 +1,33 @@
-import * as React from "react";
-import NumberUtil, {_0, fromDecimalToBN, humanize} from "../../utils/NumberUtil";
-import {tokens} from "../../models/Tokens";
+import * as React from 'react';
+import NumberUtil, { _0, fromDecimalToBN, humanize } from '../../utils/NumberUtil';
+import { tokens } from '../../models/Tokens';
 import CountUp from 'react-countup';
 
-import styles from "./BalancesPanel.module.scss";
-import {CircularProgress} from "@material-ui/core";
+import styles from './BalancesPanel.module.scss';
+import { CircularProgress } from '@material-ui/core';
 
 class BalancesPanel extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.updateDimensions = this.updateDimensions.bind(this);
+    this.state = {
+      width: 0,
+      lowerWidth: 540,
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+  }
+
+  updateDimensions() {
+    this.setState({ width: window.innerWidth })
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions)
+  }
 
   mAssetToUnderlyingValueAndLocalize(mAsset, amountBN) {
     // For right now, just return the mAsset to exchange rate value. In the future, like with mETH, we'll need to
@@ -36,7 +57,7 @@ class BalancesPanel extends React.Component {
         return '0'
       }
     } else {
-      console.error("Invalid symbol, found: ", mAsset);
+      console.error('Invalid symbol, found: ', mAsset);
       return '0';
     }
   };
@@ -50,7 +71,7 @@ class BalancesPanel extends React.Component {
       const mBalance = this.props.symbolToDmmBalanceMap ? (this.props.symbolToDmmBalanceMap[underlyingAsset.symbol] || _0) : _0;
       const decimals = Math.min(underlyingAsset.decimals, 8);
       return (
-        <>
+        <div key={`balanceRow-${underlyingAsset.symbol}`}>
           <div className={styles.balanceRow}>
             <div className={styles.asset}>
               {underlyingAsset.symbol}
@@ -65,23 +86,32 @@ class BalancesPanel extends React.Component {
             </div>
             <div className={styles.amount}>
               {humanize(mBalance, underlyingAsset.decimals, decimals, true, decimals)}
-              <span className={styles.underlyingValue}>
-                &nbsp;({mAsset ? this.mAssetToUnderlyingValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
-              </span>
+              {this.state.width < this.state.lowerWidth ? (
+                <div className={styles.underlyingValue}>
+                  ({mAsset ? this.mAssetToUnderlyingValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
+                </div>
+              ) : (
+                <span className={styles.underlyingValue}>
+                  &nbsp;({mAsset ? this.mAssetToUnderlyingValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
+                </span>
+              )}
             </div>
           </div>
-        </>
+        </div>
       );
     });
 
+    const heightPerToken = this.state.width > this.state.lowerWidth ? 90 : 112
+    const height = (tokens.length * heightPerToken) + 64
+
     return (
-      <div className={`${styles.BalancesPanel} ${this.props.disabled && styles.disabled}`}>
+      <div className={`${styles.BalancesPanel} ${this.props.disabled && styles.disabled}`} style={{ height }}>
         <div className={styles.title}>
           Balances
           {this.props.isLoading ? (<CircularProgress className={styles.balanceLoadingProgress}/>) : (<span/>)}
         </div>
         <div className={styles.bottomBorder}/>
-        <div className={styles.titleRow}>
+        <div className={styles.title}>
         </div>
         {assetBalancesViews}
       </div>

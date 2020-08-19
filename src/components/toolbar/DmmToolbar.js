@@ -1,11 +1,12 @@
-import Button from "@material-ui/core/Button";
-import React from "react";
+import Button from '@material-ui/core/Button';
+import React from 'react';
 import FiatAdapter from 'fiat-adapter';
 
 import styles from './DmmToolbar.module.scss';
 import DMMLogo from '../../images/dmm-logo.svg';
-import DmmWeb3Service from "../../services/DmmWeb3Service";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import DmmWeb3Service from '../../services/DmmWeb3Service';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { DAI, USDC } from '../../models/Tokens';
 
 class DmmToolbar extends React.Component {
 
@@ -16,7 +17,7 @@ class DmmToolbar extends React.Component {
     };
 
     this.walletChangeUid = DmmWeb3Service.onWalletChange((wallet) => {
-      this.setState({address: wallet ? wallet.address : undefined});
+      this.setState({ address: wallet ? wallet.address : undefined });
     });
   }
 
@@ -32,7 +33,7 @@ class DmmToolbar extends React.Component {
         <div className={styles.content}>
           <div className={styles.logoWrapper}>
             <div className={styles.logo}>
-              <img src={DMMLogo} alt={"DMM Logo"}/>
+              <img src={DMMLogo} alt={'DMM Logo'}/>
             </div>
             <div className={styles.logoText}>
               DMM <span className={styles.swapText}>Swap</span>
@@ -45,13 +46,17 @@ class DmmToolbar extends React.Component {
               </Button>
             </div>
             <div className={styles.connectWalletButton}>
-              { this.state.isLoading ? (
-                <CircularProgress className={styles.progressBar} color={"inherit"}/>
+              {this.state.isLoading ? (
+                <CircularProgress className={styles.progressBar} color={'inherit'}/>
               ) : (
-                <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`} onClick={() => this.props.loadWallet()}>
+                <Button className={`${styles.loadWallet} ${isWalletLoaded && styles.loaded}`}
+                        onClick={() => this.props.loadWallet()}>
                   {isWalletLoaded ? (
-                    <div><div>{'0x' + DmmWeb3Service.onboard.getState().address.substring(2,4) + '...' + DmmWeb3Service.onboard.getState().address.slice(-4)}</div><div className={styles.walletConnected}>Wallet Connected</div></div>
-                  ) : "Connect Wallet"}
+                    <div>
+                      <div>{'0x' + DmmWeb3Service.onboard.getState().address.substring(2, 4) + '...' + DmmWeb3Service.onboard.getState().address.slice(-4)}</div>
+                      <div className={styles.walletConnected}>Wallet Connected</div>
+                    </div>
+                  ) : 'Connect Wallet'}
                 </Button>
               )}
             </div>
@@ -60,7 +65,7 @@ class DmmToolbar extends React.Component {
         <FiatAdapter
           open={this.state.fiatAdapterOpen}
           onClose={() => this.setState({ fiatAdapterOpen: false })}
-          allowedCryptos={['DAI','USDC']}
+          allowedCryptos={[DAI.symbol, USDC.symbol]}
         />
       </div>
     );

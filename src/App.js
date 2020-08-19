@@ -2,24 +2,24 @@ import React from 'react';
 
 import TopSection from './components/TopSection/TopSection';
 import DmmToolbar from './components/toolbar/DmmToolbar.js';
-import Swapper from "./components/swapper/Swapper";
+import Swapper from './components/swapper/Swapper';
 import Footer from './components/Footer/Footer';
 
 import styles from './App.module.scss';
 
-import DmmWeb3Service from "./services/DmmWeb3Service";
-import NumberUtil, {BN} from "./utils/NumberUtil";
-import ERC20Service from "./services/ERC20Service";
-import DmmTokenService from "./services/DmmTokenService";
+import DmmWeb3Service from './services/DmmWeb3Service';
+import NumberUtil, { BN } from './utils/NumberUtil';
+import ERC20Service from './services/ERC20Service';
+import DmmTokenService from './services/DmmTokenService';
 
-import {tokenAddressToTokenMap, tokens, WETH} from "./models/Tokens";
+import { tokenAddressToTokenMap, tokens, WETH } from './models/Tokens';
 
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {fab} from '@fortawesome/free-brands-svg-icons';
-import {asyncForEach} from "./utils/ArrayUtil";
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import { asyncForEach } from './utils/ArrayUtil';
 
 library.add(fab);
 
@@ -50,7 +50,7 @@ class App extends React.Component {
     };
 
     this.pollForData().then(() => {
-      console.log("Finished initial poll for data")
+      console.log('Finished initial poll for data')
     });
 
     this.subscriptionId = setInterval(async () => {
@@ -76,7 +76,7 @@ class App extends React.Component {
       });
       this.pollForData()
         .then(() => {
-          console.log("Finished poll for data due to wallet change");
+          console.log('Finished poll for data due to wallet change');
           this.setState({
             isLoadingBalances: false,
           });
@@ -141,7 +141,7 @@ class App extends React.Component {
               snackMessage: 'The transaction was cancelled'
             });
           } else if (error) {
-            console.error("Approval error: ", error);
+            console.error('Approval error: ', error);
             this.setState({
               isWaitingForSignature: false,
               isWaitingForApprovalToMine: false,
@@ -207,7 +207,7 @@ class App extends React.Component {
           });
           return false;
         } else {
-          console.error("Mint error: ", error);
+          console.error('Mint error: ', error);
           this.setState({
             isWaitingForSignature: false,
             isWaitingForActionToMine: false,
@@ -220,7 +220,7 @@ class App extends React.Component {
     this.setState({
       isWaitingForSignature: false,
       isWaitingForActionToMine: false,
-      value: isSuccessful ? "" : this.state.value,
+      value: isSuccessful ? '' : this.state.value,
     });
   };
 
@@ -285,9 +285,9 @@ class App extends React.Component {
 
     if (DmmWeb3Service.walletAddress()) {
       this.loadWeb3Data(0).catch(e => {
-        console.error("Could not get web3 data due to error: ", e);
+        console.error('Could not get web3 data due to error: ', e);
         this.setState({
-          unknownError: `Could not refresh balances due to error`
+          unknownError: `Could not refresh balances due to an unknown error`
         });
       });
     }
@@ -295,8 +295,9 @@ class App extends React.Component {
 
   loadWeb3Data = async (retryCount, mostRecentError) => {
     if (retryCount === 5) {
-      return Promise.reject(mostRecentError);
+      return Promise.reject(mostRecentError || 'An unknown error occurred!');
     }
+
 
     const dmmTokens = Object.values(this.state.dmmTokensMap);
     const tokenValuesPromises = dmmTokens.map(dmmToken => {
@@ -307,7 +308,7 @@ class App extends React.Component {
       return Promise.all([tokenAllowancePromise, underlyingTokenBalancePromise, dmmTokenBalancePromise]);
     });
 
-    Promise.all(tokenValuesPromises)
+    return Promise.all(tokenValuesPromises)
       .then(async tokenValues => {
         const symbolToUnderlyingAllowanceMap = {};
         const symbolToDmmAllowanceMap = {};
@@ -342,15 +343,15 @@ class App extends React.Component {
         });
       })
       .catch(error => {
-        new Promise((resolve) => {
+        return new Promise((resolve) => {
           const delayInMillis = 200;
-          setTimeout(() => resolve.bind(null), delayInMillis);
+          setTimeout(() => resolve(null), delayInMillis);
         }).then(() => this.loadWeb3Data(retryCount + 1, error));
       });
   };
 
   loadWallet = () => {
-    this.setState({isLoading: true});
+    this.setState({ isLoading: true });
     DmmWeb3Service.onboard.walletSelect()
       .then(result => {
         if (result && typeof DmmWeb3Service.instance.wallet.connect === 'function') {
@@ -360,7 +361,7 @@ class App extends React.Component {
         }
       })
       .then(() => {
-        this.setState({isLoading: false});
+        this.setState({ isLoading: false });
       })
       .catch(error => {
         const metaMaskDenialErrorMessage = 'This dapp needs access to your account information.'
@@ -369,7 +370,7 @@ class App extends React.Component {
             snackMessage: `There was an unknown error loading your wallet. Error Code: ${error.code || Object.keys(error)}`
           });
         }
-        this.setState({isLoading: false});
+        this.setState({ isLoading: false });
         console.error('Found error ', error);
       })
   };
@@ -425,8 +426,8 @@ class App extends React.Component {
                 totalSupply
               });
             }}
-            updateValue={(val) => this.setState({inputValue: val})}
-            setIsMinting={(val) => this.setState({isMinting: val})}
+            updateValue={(val) => this.setState({ inputValue: val })}
+            setIsMinting={(val) => this.setState({ isMinting: val })}
             exchangeRate={this.state.exchangeRate}
             symbolToUnderlyingBalanceMap={this.state.symbolToUnderlyingBalanceMap}
             symbolToDmmBalanceMap={this.state.symbolToDmmBalanceMap}
@@ -442,7 +443,7 @@ class App extends React.Component {
         <Snackbar open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}
                   autoHideDuration={5000}
                   onClose={this.onSnackbarClose}>
-          <Alert severity={this.state.snackError || this.state.unknownError ? "error" : "info"}
+          <Alert severity={this.state.snackError || this.state.unknownError ? 'error' : 'info'}
                  onClose={this.onSnackbarClose}>
             {this.state.snackError || this.state.unknownError || this.state.snackMessage}
           </Alert>

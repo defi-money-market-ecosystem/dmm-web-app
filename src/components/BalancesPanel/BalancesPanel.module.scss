@@ -18,6 +18,12 @@
   opacity: 0.5;
 }
 
+@media(max-width: 540px) {
+  .BalancesPanel {
+    margin-bottom: 64px;
+  }
+}
+
 .balanceLoadingProgress {
   width: 20px !important;
   height: 20px !important;
@@ -59,6 +65,7 @@
 .amount {
   width: fit-content;
   font-weight: 400;
+  text-align: right;
 }
 
 .underlyingValue {
@@ -87,17 +94,5 @@
   .BalancesPanel {
     width: 95%;
     height: fit-content;
-  }
-}
-
-@media (max-height: 650px) {
-  .BalancesPanel {
-    height: 285px;
-  }
-
-  .balanceRow {
-    padding-bottom: 4px;
-    margin-bottom: 4px;
-    font-size: 17px;
   }
 }

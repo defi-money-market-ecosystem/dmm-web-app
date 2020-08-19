@@ -1,9 +1,39 @@
 import React from 'react';
 import CountUp from 'react-countup';
-import NumberUtil, {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
+import NumberUtil, { fromDecimalToBN, humanize } from '../../utils/NumberUtil';
 
 import styles from './TopSection.module.scss';
-import {CircularProgress} from "@material-ui/core";
+import { CircularProgress } from '@material-ui/core';
+import styled, { keyframes } from 'styled-components';
+import { tokens } from '../../models/Tokens';
+
+const TokenWrappers = tokens.map((token, index, allTokens) => {
+  const totalDuration = allTokens.length * 8;
+  const delay = index * 8;
+  const percentageSplit = 100 / allTokens.length
+
+  const fadeAnimation = keyframes`
+    0% { 
+      opacity: 0; 
+    }
+    2% { 
+      opacity: 1; 
+    }
+    ${percentageSplit}% { 
+      opacity: 1; 
+    }
+    ${percentageSplit + 2}% { 
+      opacity: 0; 
+    }
+    100% { 
+      opacity: 0; 
+    }
+  `
+
+  return styled.div`
+    animation: ${fadeAnimation} ${totalDuration}s ${delay}s infinite;
+  `
+})
 
 class TopSection extends React.Component {
 
@@ -30,19 +60,20 @@ class TopSection extends React.Component {
           <div className={styles.rightStat}>
             {/* 0.0000001981862 per second */}
             <div className={styles.aprWrapper}>
-              Earning 6.25% APY
+              Earning 6.25% APR
             </div>
             <div>
-              {this.props.tokens.map(token => {
-                const lowerSymbol = token.symbol.toLowerCase();
+              {this.props.tokens.map((token, index) => {
                 const exchangeRate = this.props.symbolToExchangeRateMap
                   ? this.props.symbolToExchangeRateMap[`m${token.symbol}`]
                   : undefined;
 
+                const TokenWrapper = TokenWrappers[index];
+
                 return (
-                  <div className={styles[`${lowerSymbol}Section`]}>
+                  <TokenWrapper className={styles.section} key={`header-${token.symbol}`}>
                     <div className={styles.usdToDmm}>
-                      <div className={styles[`${lowerSymbol}InterestRate`]}>
+                      <div className={styles.interestRate}>
                         <span className={styles.bold}>1</span>
                         <span className={styles.light}>&nbsp;m{token.symbol} =&nbsp;</span>
                         <CountUp
@@ -59,7 +90,7 @@ class TopSection extends React.Component {
                       </div>
                     </div>
                     <div className={styles.usdToDmm}>
-                      <div className={styles[`${lowerSymbol}InterestRate`]}>
+                      <div className={styles.interestRate}>
                         <span className={styles.bold}>1</span>
                         <span className={styles.light}>&nbsp;{token.symbol} =&nbsp;</span>
                         <CountUp
@@ -75,7 +106,7 @@ class TopSection extends React.Component {
                         <span className={styles.light}>&nbsp;m{token.symbol}</span>
                       </div>
                     </div>
-                  </div>
+                  </TokenWrapper>
                 );
               })}
             </div>

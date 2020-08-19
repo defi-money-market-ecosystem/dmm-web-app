@@ -136,43 +136,20 @@
   }
 }
 
-.daiInterestRate,
-.ethInterestRate,
-.usdcInterestRate {
+.interestRate {
   font-weight: 500;
   font-size: 0.9em;
 }
 
-.daiSection {
-  width: fit-content;
-  text-align: center;
-  position: absolute;
-  -webkit-animation: fadeAnimation 24s infinite; /* Safari 4+ */
-  -moz-animation: fadeAnimation 24s infinite; /* Fx 4+ */
-  -o-animation: fadeAnimation 24s infinite; /* Opera 12+ */
-  animation: fadeAnimation 24s infinite; /* IE 10+, Fx 29+ */
-}
-
-.ethSection {
+.section {
   opacity: 0;
   width: fit-content;
   text-align: center;
   position: absolute;
-  -webkit-animation: fadeAnimation 24s 8s infinite; /* Safari 4+ */
-  -moz-animation: fadeAnimation 24s 8s infinite; /* Fx 4+ */
-  -o-animation: fadeAnimation 24s 8s infinite; /* Opera 12+ */
-  animation: fadeAnimation 24s 8s infinite; /* IE 10+, Fx 29+ */
-}
-
-.usdcSection {
-  opacity: 0;
-  width: fit-content;
-  text-align: center;
-  position: absolute;
-  -webkit-animation: fadeAnimation 24s 16s infinite; /* Safari 4+ */
-  -moz-animation: fadeAnimation 24s 16s infinite; /* Fx 5+ */
-  -o-animation: fadeAnimation 24s 16s infinite; /* Opera 12+ */
-  animation: fadeAnimation 24s 16s infinite; /* IE 10+, Fx 29+ */
+  //-webkit-animation: fadeAnimation 0s infinite; /* Safari 4+ */
+  //-moz-animation: fadeAnimation 0s infinite; /* Fx 4+ */
+  //-o-animation: fadeAnimation 0s infinite; /* Opera 12+ */
+  //animation: fadeAnimation 0s infinite; /* IE 10+, Fx 29+ */
 }
 
 .arrow {
@@ -208,9 +185,7 @@
     font-size: 2.3em;
   }
 
-  .daiInterestRate,
-  .ethInterestRate,
-  .usdcInterestRate, {
+  .interestRate {
     font-size: 0.9em;
     line-height: 1.4em;
   }
@@ -238,7 +213,7 @@
     margin-bottom: -3px;
   }
 
-  .daiInterestRate {
+  .interestRate {
     font-size: 0.9em;
     line-height: 1.4em;
   }
@@ -272,9 +247,7 @@
     margin-bottom: -5px;
   }
 
-  .daiInterestRate,
-  .ethInterestRate,
-  .usdcInterestRate, {
+  .interestRate {
     font-size: 0.8em;
     line-height: 1.4em;
   }
@@ -309,9 +282,7 @@
     font-size: 1.6em;
   }
 
-  .daiInterestRate,
-  .ethInterestRate,
-  .usdcInterestRate {
+  .interestRate {
     font-size: 0.8em;
     line-height: 1.3em;
   }
@@ -322,9 +293,7 @@
     padding-bottom: 120px;
   }
 
-  .daiSection,
-  .ethSection,
-  .usdcSection {
+  .section {
     right: 0;
     width: 100%;
   }

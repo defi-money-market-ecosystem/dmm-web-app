@@ -1,12 +1,12 @@
 import React from 'react';
-import {CircularProgress} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import Tooltip from "@material-ui/core/Tooltip";
+import { CircularProgress } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import NumberUtil, {fromDecimalToBN, humanize} from "../../utils/NumberUtil";
-import {WETH} from "../../models/Tokens";
-import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
+import NumberUtil, { fromDecimalToBN, humanize } from '../../utils/NumberUtil';
+import { WETH } from '../../models/Tokens';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -71,11 +71,11 @@ class SwapPanel extends React.Component {
       humanize(fromDecimalToBN(newAmount, decimals), decimals, undefined, true);
     //console.log("newAmount ", newAmount, fromDecimalToBN(newAmount, decimals).toString(), humanize(fromDecimalToBN(newAmount, decimals), decimals, undefined, true), newFormattedAmount, isInvalid, newAmount.includes('.'));
 
-    return {newAmount, newFormattedAmount, isInvalid}
+    return { newAmount, newFormattedAmount, isInvalid }
   }
 
   updateUnderlying(e) {
-    const {newAmount, newFormattedAmount, isInvalid} = this.getNewAmountAndIsInvalid(e);
+    const { newAmount, newFormattedAmount, isInvalid } = this.getNewAmountAndIsInvalid(e);
     const decimals = this.underlyingTokenDecimals();
     const dmmAmount = isInvalid ? NumberUtil._0 : fromDecimalToBN(parseFloat(newAmount), decimals).mul(NumberUtil._1).div(this.props.exchangeRate);
 
@@ -99,7 +99,7 @@ class SwapPanel extends React.Component {
   }
 
   updateDmm(e) {
-    const {newAmount, newFormattedAmount, isInvalid} = this.getNewAmountAndIsInvalid(e);
+    const { newAmount, newFormattedAmount, isInvalid } = this.getNewAmountAndIsInvalid(e);
     const decimals = this.underlyingTokenDecimals();
     const underlyingValue = !isInvalid ? fromDecimalToBN(parseFloat(newAmount), decimals).mul(this.props.exchangeRate).div(NumberUtil._1) : '0';
 
@@ -144,10 +144,10 @@ class SwapPanel extends React.Component {
       isInitialLoad: false,
     });
 
-    if (newVal === "") {
+    if (newVal === '') {
       this.setState({
         inputError: undefined,
-        value: "",
+        value: '',
         inputValue: NumberUtil._0,
       });
       return;
@@ -157,7 +157,7 @@ class SwapPanel extends React.Component {
     const regex = /^[+-]?(\d+|\.\d+|\d+\.\d+|\d+\.)$/;
     if (Number.isNaN(value) || !regex.test(newVal)) {
       this.setState({
-        inputError: "Must be a valid number",
+        inputError: 'Must be a valid number',
       });
       return;
     }
@@ -174,7 +174,7 @@ class SwapPanel extends React.Component {
       this.setState({
         inputError: `Must be >= 1`
       });
-    } else if (value.toString().includes("e+")) {
+    } else if (value.toString().includes('e+')) {
       this.setState({
         inputError: `Number is too large`
       });
@@ -223,7 +223,7 @@ class SwapPanel extends React.Component {
 
   setUnderlyingTicker(ticker) {
     this.props.updateUnderlying(ticker);
-    this.setState({underlyingSelectorExpanded: false});
+    this.setState({ underlyingSelectorExpanded: false });
     this.resetNumericState();
   }
 
@@ -237,7 +237,7 @@ class SwapPanel extends React.Component {
         />
         <div
           className={`${styles.underlyingSelector} ${this.state.underlyingSelectorExpanded && styles.expanded}`}
-          onClick={() => this.setState({underlyingSelectorExpanded: !this.state.underlyingSelectorExpanded})}>
+          onClick={() => this.setState({ underlyingSelectorExpanded: !this.state.underlyingSelectorExpanded })}>
           <div className={styles.asset}>
             {isMinting ? this.props.underlyingToken.symbol : this.props.dmmToken.symbol}
           </div>
@@ -253,7 +253,7 @@ class SwapPanel extends React.Component {
           <div>
             {this.props.tokens.filter(token => token.symbol !== this.props.underlyingToken.symbol).map(token => {
               return (
-                <div
+                <div key={`token-${token.symbol}`}
                   className={styles.underlyingOption}
                   onClick={(e) => {
                     const targetedSymbol = isMinting ? e.target.innerHTML : e.target.innerHTML.substring(1);
@@ -326,7 +326,7 @@ class SwapPanel extends React.Component {
         <ThemeProvider theme={theme}>
           <div className={styles.mintOrRedeem}>
             <Tabs value={this.state.currentFunction} onChange={(e, newSelectedIndex) => {
-              this.setState({currentFunction: newSelectedIndex});
+              this.setState({ currentFunction: newSelectedIndex });
               this.resetNumericState();
               this.props.setIsMinting(newSelectedIndex === 0)
             }} aria-label="Swap Tabs">
@@ -381,16 +381,16 @@ class SwapPanel extends React.Component {
                 <Tooltip
                   title={this.props.isWaitingForSignature ? 'Awaiting signature from wallet' : `Waiting for your assets to ${isMinting ? 'mint' : 'redeem'}.`}>
                   <Button className={`${styles.submitButton} ${styles.loading}`} disabled={false}>
-                    <CircularProgress color={'primary'}/> {this.props.isMinting ? "Minting" : "Redeeming"}
+                    <CircularProgress color={'primary'}/> {this.props.isMinting ? 'Minting' : 'Redeeming'}
                   </Button>
                 </Tooltip>
               )
             ) : (
               <Button
-                className={[styles.submitButton, (this.state.isInitialLoad || !!this.state.inputError || this.state.underlyingValue === '0') ? styles.submitButtonDisabled : '']}
+                className={styles.submitButton && (this.state.isInitialLoad || !!this.state.inputError || this.state.underlyingValue === '0' ? styles.submitButtonDisabled : '')}
                 onClick={() => this.props.onDoOperation()}
                 disabled={!!this.state.inputError || this.state.underlyingValue === '0'}>
-                {this.props.isMinting ? "Mint" : "Redeem"}
+                {this.props.isMinting ? 'Mint' : 'Redeem'}
               </Button>
             )}
           </div>
