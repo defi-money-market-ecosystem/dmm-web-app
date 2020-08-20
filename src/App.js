@@ -225,11 +225,11 @@ class App extends React.Component {
   };
 
   getAllowance = async (token, spender) => {
-    return await ERC20Service.getAllowance(token.address, DmmWeb3Service.walletAddress(), spender ? spender.address : this.state.dmmToken.address);
+    return await ERC20Service.getAllowance(token.address || token, DmmWeb3Service.walletAddress(), spender ? spender.address : this.state.dmmToken.address);
   };
 
   getBalance = async (token) => {
-    return await ERC20Service.getBalance(token.address, DmmWeb3Service.walletAddress());
+    return await ERC20Service.getBalance(token.address || token, DmmWeb3Service.walletAddress());
   };
 
   componentWillUnmount() {
@@ -301,9 +301,8 @@ class App extends React.Component {
 
     const dmmTokens = Object.values(this.state.dmmTokensMap);
     const tokenValuesPromises = dmmTokens.map(dmmToken => {
-      const underlyingToken = tokenAddressToTokenMap[dmmToken.underlyingTokenAddress.toLowerCase()];
-      const tokenAllowancePromise = this.getAllowance(underlyingToken, dmmToken);
-      const underlyingTokenBalancePromise = this.getBalance(underlyingToken);
+      const tokenAllowancePromise = this.getAllowance(dmmToken.underlyingTokenAddress, dmmToken);
+      const underlyingTokenBalancePromise = this.getBalance(dmmToken.underlyingTokenAddress);
       const dmmTokenBalancePromise = this.getBalance(dmmToken);
       return Promise.all([tokenAllowancePromise, underlyingTokenBalancePromise, dmmTokenBalancePromise]);
     });
