@@ -251,7 +251,7 @@ class SwapPanel extends React.Component {
             {isMinting ? this.props.underlyingToken.symbol : this.props.dmmToken.symbol}
           </div>
           <div>
-            {this.props.tokens.filter(token => token.symbol !== this.props.underlyingToken.symbol).map(token => {
+            {this.props.tokens.filter(token => token.symbol !== this.props.underlyingToken.symbol && !token.isHidden).map(token => {
               return (
                 <div key={`token-${token.symbol}`}
                   className={styles.underlyingOption}

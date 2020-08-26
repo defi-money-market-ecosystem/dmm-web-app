@@ -1,12 +1,13 @@
 class Token {
 
-  constructor(address, name, symbol, decimals, imageUrl) {
+  constructor(address, name, symbol, decimals, imageUrl, isHidden) {
     this.address = address;
     this.name = name;
     this.symbol = symbol;
     this.decimals = decimals;
     this.imageUrl = imageUrl;
     this.addressLower = address.toLowerCase();
+    this.isHidden = isHidden;
   }
 }
 
@@ -15,7 +16,8 @@ export const DAI = new Token(
   'Dai Stablecoin',
   'DAI',
   18,
-  'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png'
+  'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
+  false,
 );
 
 export const USDC = new Token(
@@ -23,7 +25,8 @@ export const USDC = new Token(
   'USD Coin',
   'USDC',
   6,
-  'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png'
+  'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+  false,
 );
 
 export const USDT = new Token(
@@ -31,7 +34,8 @@ export const USDT = new Token(
   'Tether USD',
   'USDT',
   6,
-  'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png'
+  'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+  true,
 );
 
 export const WETH = new Token(
@@ -39,7 +43,8 @@ export const WETH = new Token(
   'Ether',
   'ETH',
   18,
-  'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png'
+  'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+  false,
 );
 
 // Put WETH first because we alphabetize it by symbol

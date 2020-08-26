@@ -315,11 +315,14 @@ class App extends React.Component {
         const symbolToDmmBalanceMap = {};
 
         await asyncForEach(tokenValues, async (tokenValue, index) => {
-          const symbol = tokenAddressToTokenMap[dmmTokens[index].underlyingTokenAddress].symbol;
-          symbolToUnderlyingAllowanceMap[symbol] = await tokenValue[0];
-          symbolToDmmAllowanceMap[symbol] = new BN('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'hex');
-          symbolToUnderlyingBalanceMap[symbol] = await tokenValue[1];
-          symbolToDmmBalanceMap[symbol] = await tokenValue[2];
+          const underlyingToken = tokenAddressToTokenMap[dmmTokens[index].underlyingTokenAddress];
+          if (underlyingToken) {
+            const symbol = underlyingToken.symbol;
+            symbolToUnderlyingAllowanceMap[symbol] = await tokenValue[0];
+            symbolToDmmAllowanceMap[symbol] = new BN('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'hex');
+            symbolToUnderlyingBalanceMap[symbol] = await tokenValue[1];
+            symbolToDmmBalanceMap[symbol] = await tokenValue[2];
+          }
         });
 
         const underlyingTokenSymbol = this.state.underlyingToken.symbol;
