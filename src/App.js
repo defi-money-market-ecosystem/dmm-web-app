@@ -32,8 +32,6 @@ class App extends React.Component {
       tokens: tokens,
       underlyingAllowance: NumberUtil._0,
       exchangeRate: null,
-      mDaiExchangeRate: null,
-      mUsdcExchangeRate: null,
       dmmAllowance: NumberUtil._0,
       underlyingBalance: NumberUtil._0,
       dmmBalance: NumberUtil._0,

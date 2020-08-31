@@ -35,7 +35,7 @@ export const USDT = new Token(
   'USDT',
   6,
   'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-  true,
+  false,
 );
 
 export const WETH = new Token(
