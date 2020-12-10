@@ -12,7 +12,7 @@ class Token {
 }
 
 export const DAI = new Token(
-  process.env.REACT_APP_DAI_ADDRESS,
+  process.env.REACT_APP_DAI_ADDRESS.toLowerCase(),
   'Dai Stablecoin',
   'DAI',
   18,
@@ -21,7 +21,7 @@ export const DAI = new Token(
 );
 
 export const USDC = new Token(
-  process.env.REACT_APP_USDC_ADDRESS,
+  process.env.REACT_APP_USDC_ADDRESS.toLowerCase(),
   'USD Coin',
   'USDC',
   6,
@@ -30,7 +30,7 @@ export const USDC = new Token(
 );
 
 export const USDT = new Token(
-  process.env.REACT_APP_USDT_ADDRESS,
+  process.env.REACT_APP_USDT_ADDRESS.toLowerCase(),
   'Tether USD',
   'USDT',
   6,
@@ -39,7 +39,7 @@ export const USDT = new Token(
 );
 
 export const WETH = new Token(
-  process.env.REACT_APP_WETH_ADDRESS,
+  process.env.REACT_APP_WETH_ADDRESS.toLowerCase(),
   'Ether',
   'ETH',
   18,
