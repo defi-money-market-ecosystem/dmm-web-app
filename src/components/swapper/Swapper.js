@@ -8,6 +8,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import SwapPanel from '../SwapPanel/SwapPanel';
 import BalancesPanel from '../BalancesPanel/BalancesPanel';
 
+import { withTranslations } from '../../services/Translations/Translations';
 
 class Swapper extends React.Component {
 
@@ -22,6 +23,7 @@ class Swapper extends React.Component {
     const swapPanelAndBalancesPanel = (
       <>
         <SwapPanel
+          language={this.props.language}
           isMinting={this.props.isMinting}
           isWaitingForSignature={this.props.isWaitingForSignature}
           isWaitingForApprovalToMine={this.props.isWaitingForApprovalToMine}
@@ -42,6 +44,7 @@ class Swapper extends React.Component {
           disabled={!isWalletLoaded}
         />
         <BalancesPanel
+          language={this.props.language}
           symbolToUnderlyingBalanceMap={this.props.symbolToUnderlyingBalanceMap}
           symbolToDmmBalanceMap={this.props.symbolToDmmBalanceMap}
           dmmToken={this.props.dmmToken}
@@ -74,11 +77,11 @@ class Swapper extends React.Component {
                   disabled={isWalletLoaded}
                   onClick={() => this.props.loadWallet()}
                 >
-                  {isWalletLoaded ? "Wallet Loaded" : "Connect Your Wallet"}
+                  {isWalletLoaded ? this.props.excerpt('swapper.walletLoaded', this.props.language) : this.props.excerpt('swapper.connectYourWallet', this.props.language)}
                 </Button>
               )}
               <Tooltip
-                title={'DMM tokens exist on the Ethereum blockchain. To hold, swap, or transfer DMM tokens you require an Ethereum wallet. MetaMask is a good option that works with most browsers.'}
+                title={this.props.excerpt('swapper.walletExplanation', this.props.language)}
                 arrow
               >
                 <div className={styles.whatsAWallet}>
@@ -95,4 +98,4 @@ class Swapper extends React.Component {
   };
 }
 
-export default Swapper;
+export default withTranslations(Swapper);

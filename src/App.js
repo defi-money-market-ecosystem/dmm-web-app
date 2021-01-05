@@ -21,11 +21,30 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { asyncForEach } from './utils/ArrayUtil';
 
+import Languages from './services/Translations/Languages';
+import USFlag from './assets/US-Flag.png';
+import CNFlag from './assets/CN-Flag.png';
+
 library.add(fab);
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    const lang = navigator.language || navigator.userLanguage;
+
+    let browserLanguage = Languages.ENGLISH;
+
+    if (lang) {
+      if (lang === 'zh-CN' || lang === 'zh') {
+        browserLanguage = Languages.CHINESE;
+      }
+    }
+    else if (props.lang) {
+      if (props.lang === 'CN') {
+        browserLanguage = Languages.CHINESE;
+      }
+    }
 
     this.state = {
       counter: 0,
@@ -45,6 +64,8 @@ class App extends React.Component {
       activeSupply: NumberUtil._0,
       totalSupply: NumberUtil._0,
       totalTokensPurchased: NumberUtil._0,
+      language: browserLanguage,
+      selectedLanguage: null,
     };
 
     this.pollForData().then(() => {
@@ -390,14 +411,31 @@ class App extends React.Component {
   render() {
     return (
       <div className={styles.appWrapper}>
-        <DmmToolbar loadWallet={() => this.loadWallet()} />
+        <div className={styles.languageSelector}>
+          { (this.state.selectedLanguage || this.state.language) === Languages.CHINESE ? (
+            <div className={styles.language}>
+              <div onClick={() => this.setState({ selectedLanguage: Languages.ENGLISH })}>
+                <img src={USFlag} />English
+              </div>
+            </div>
+          ) : (
+            <div className={styles.language}>
+              <div onClick={() => this.setState({ selectedLanguage: Languages.CHINESE })}>
+                <img src={CNFlag} />中文
+              </div>
+            </div>
+          )}
+        </div>
+        <DmmToolbarlanguage={this.state.selectedLanguage || this.state.language} loadWallet={() => this.loadWallet()} />
         <TopSection
+          language={this.state.selectedLanguage || this.state.language}
           symbolToExchangeRateMap={this.state.symbolToExchangeRateMap}
           totalTokensPurchased={this.state.totalTokensPurchased}
           tokens={this.state.tokens}
         />
         <div className={styles.App}>
           <Swapper
+            language={this.state.selectedLanguage || this.state.language}
             dmmToken={this.state.dmmToken}
             dmmAllowance={this.state.dmmAllowance}
             dmmBalance={this.state.dmmBalance}
@@ -448,7 +486,9 @@ class App extends React.Component {
             isLoadingBalances={this.state.isLoadingBalances}
             symbolToExchangeRateMap={this.state.symbolToExchangeRateMap}
           />
-          <Footer/>
+          <Footer
+            language={this.state.selectedLanguage || this.state.language}
+          />
         </div>
         <Snackbar
           open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}

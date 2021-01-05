@@ -6,6 +6,8 @@ import CountUp from 'react-countup';
 import styles from './BalancesPanel.module.scss';
 import { CircularProgress } from '@material-ui/core';
 
+import { withTranslations } from '../../services/Translations/Translations';
+
 class BalancesPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -142,7 +144,7 @@ class BalancesPanel extends React.Component {
     return (
       <div className={`${styles.BalancesPanel} ${this.props.disabled && styles.disabled}`} style={{ height }}>
         <div className={styles.title}>
-          Balances
+          {this.props.excerpt('balances.title', this.props.language)}
           {this.props.isLoading ? <CircularProgress className={styles.balanceLoadingProgress} /> : <span />}
         </div>
         <div className={styles.bottomBorder} />
@@ -153,4 +155,4 @@ class BalancesPanel extends React.Component {
   }
 }
 
-export default BalancesPanel;
+export default withTranslations(BalancesPanel);

@@ -94,3 +94,24 @@ section {
 .appWrapper {
   background: linear-gradient(360deg, #327ccb, #4f94de 5%, #8bbbef 15%, #bdddff 25%, #deeeff 40%);
 }
+
+.languageSelector {
+  position: absolute;
+  transform: rotate(-90deg);
+  right: -20px;
+  top: 120px;
+  z-index: 999;
+  cursor: pointer;
+  color: black !important;
+}
+
+.languageSelector img {
+  width: 30px;
+  margin-right: 8px;
+  margin-bottom: -2px;
+}
+
+.languageSelector a {
+  text-decoration: none !important;
+  color: black !important;
+}
