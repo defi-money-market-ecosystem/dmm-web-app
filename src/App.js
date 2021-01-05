@@ -8,7 +8,7 @@ import Footer from './components/Footer/Footer';
 import styles from './App.module.scss';
 
 import DmmWeb3Service from './services/DmmWeb3Service';
-import NumberUtil, { BN } from './utils/NumberUtil';
+import NumberUtil, { BN, MAX_UINT256 } from './utils/NumberUtil';
 import ERC20Service from './services/ERC20Service';
 import DmmTokenService from './services/DmmTokenService';
 
@@ -48,7 +48,7 @@ class App extends React.Component {
     };
 
     this.pollForData().then(() => {
-      console.log('Finished initial poll for data')
+      console.log('Finished initial poll for data');
     });
 
     this.subscriptionId = setInterval(async () => {
@@ -92,7 +92,7 @@ class App extends React.Component {
       snackError: undefined,
       unknownError: undefined,
       snackMessage: undefined,
-    })
+    });
   };
 
   doOperation = async () => {
@@ -130,13 +130,13 @@ class App extends React.Component {
           });
           return true;
         })
-        .catch((error) => {
+        .catch(error => {
           if (error.code === 4001) {
             // User cancelled the txn
             this.setState({
               isWaitingForSignature: false,
               isWaitingForApprovalToMine: false,
-              snackMessage: 'The transaction was cancelled'
+              snackMessage: 'The transaction was cancelled',
             });
           } else if (error) {
             console.error('Approval error: ', error);
@@ -223,17 +223,21 @@ class App extends React.Component {
   };
 
   getAllowance = async (token, spender) => {
-    return await ERC20Service.getAllowance(token.address || token, DmmWeb3Service.walletAddress(), spender ? spender.address : this.state.dmmToken.address);
+    return await ERC20Service.getAllowance(
+      token.address || token,
+      DmmWeb3Service.walletAddress(),
+      spender ? spender.address : this.state.dmmToken.address,
+    );
   };
 
-  getBalance = async (token) => {
+  getBalance = async token => {
     return await ERC20Service.getBalance(token.address || token, DmmWeb3Service.walletAddress());
   };
 
   componentWillUnmount() {
     clearInterval(this.subscriptionId);
     DmmWeb3Service.removeOnWalletChange(this.walletChangeUid);
-  };
+  }
 
   pollForData = async () => {
     if (!this.state.dmmTokensMap || this.state.counter % 10 === 0) {
@@ -285,7 +289,7 @@ class App extends React.Component {
       this.loadWeb3Data(0).catch(e => {
         console.error('Could not get web3 data due to error: ', e);
         this.setState({
-          unknownError: `Could not refresh balances due to an unknown error`
+          unknownError: `Could not refresh balances due to an unknown error`,
         });
       });
     }
@@ -295,7 +299,6 @@ class App extends React.Component {
     if (retryCount === 5) {
       return Promise.reject(mostRecentError || 'An unknown error occurred!');
     }
-
 
     const dmmTokens = Object.values(this.state.dmmTokensMap);
     const tokenValuesPromises = dmmTokens.map(dmmToken => {
@@ -317,7 +320,7 @@ class App extends React.Component {
           if (underlyingToken) {
             const symbol = underlyingToken.symbol;
             symbolToUnderlyingAllowanceMap[symbol] = await tokenValue[0];
-            symbolToDmmAllowanceMap[symbol] = new BN('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'hex');
+            symbolToDmmAllowanceMap[symbol] = new BN(MAX_UINT256, 'hex');
             symbolToUnderlyingBalanceMap[symbol] = await tokenValue[1];
             symbolToDmmBalanceMap[symbol] = await tokenValue[2];
           }
@@ -343,7 +346,7 @@ class App extends React.Component {
         });
       })
       .catch(error => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           const delayInMillis = 200;
           setTimeout(() => resolve(null), delayInMillis);
         }).then(() => this.loadWeb3Data(retryCount + 1, error));
@@ -351,8 +354,12 @@ class App extends React.Component {
   };
 
   loadWallet = () => {
-    this.setState({ isLoading: true });
-    DmmWeb3Service.onboard.walletSelect()
+    this.setState({
+      isLoading: true,
+    });
+
+    DmmWeb3Service.onboard
+      .walletSelect()
       .then(result => {
         if (result && typeof DmmWeb3Service.instance.wallet.connect === 'function') {
           return DmmWeb3Service.instance.wallet.connect();
@@ -361,26 +368,29 @@ class App extends React.Component {
         }
       })
       .then(() => {
-        this.setState({ isLoading: false });
+        this.setState({
+          isLoading: false,
+        });
       })
       .catch(error => {
-        const metaMaskDenialErrorMessage = 'This dapp needs access to your account information.'
+        const metaMaskDenialErrorMessage = 'This dapp needs access to your account information.';
         if (error.code !== 4001 && error.message !== metaMaskDenialErrorMessage) {
+          const errorCode = error.code || Object.keys(error);
           this.setState({
-            snackMessage: `There was an unknown error loading your wallet. Error Code: ${error.code || Object.keys(error)}`
+            snackMessage: `There was an unknown error loading your wallet. Error Code: ${errorCode}`,
           });
         }
-        this.setState({ isLoading: false });
+        this.setState({
+          isLoading: false,
+        });
         console.error('Found error ', error);
-      })
+      });
   };
 
   render() {
     return (
       <div className={styles.appWrapper}>
-        <DmmToolbar
-          loadWallet={() => this.loadWallet()}
-        />
+        <DmmToolbar loadWallet={() => this.loadWallet()} />
         <TopSection
           symbolToExchangeRateMap={this.state.symbolToExchangeRateMap}
           totalTokensPurchased={this.state.totalTokensPurchased}
@@ -401,7 +411,7 @@ class App extends React.Component {
             isWaitingForApprovalToMine={this.state.isWaitingForApprovalToMine}
             loadWallet={() => this.loadWallet()}
             doOperation={() => this.doOperation()}
-            updateUnderlying={(newTicker) => {
+            updateUnderlying={newTicker => {
               const underlyingToken = this.state.tokens.find(token => token.symbol === newTicker);
               const dmmToken = this.state.dmmTokensMap[underlyingToken.address.toLowerCase()];
               const underlyingTokenSymbol = underlyingToken.symbol;
@@ -423,11 +433,11 @@ class App extends React.Component {
                 exchangeRate,
                 underlyingAllowance,
                 activeSupply,
-                totalSupply
+                totalSupply,
               });
             }}
-            updateValue={(val) => this.setState({ inputValue: val })}
-            setIsMinting={(val) => this.setState({ isMinting: val })}
+            updateValue={val => this.setState({ inputValue: val })}
+            setIsMinting={val => this.setState({ isMinting: val })}
             exchangeRate={this.state.exchangeRate}
             symbolToUnderlyingBalanceMap={this.state.symbolToUnderlyingBalanceMap}
             symbolToDmmBalanceMap={this.state.symbolToDmmBalanceMap}
@@ -440,18 +450,21 @@ class App extends React.Component {
           />
           <Footer/>
         </div>
-        <Snackbar open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}
-                  autoHideDuration={5000}
-                  onClose={this.onSnackbarClose}>
-          <Alert severity={this.state.snackError || this.state.unknownError ? 'error' : 'info'}
-                 onClose={this.onSnackbarClose}>
+        <Snackbar
+          open={!!this.state.snackError || !!this.state.unknownError || this.state.snackMessage}
+          autoHideDuration={5000}
+          onClose={this.onSnackbarClose}
+        >
+          <Alert
+            severity={this.state.snackError || this.state.unknownError ? 'error' : 'info'}
+            onClose={this.onSnackbarClose}
+          >
             {this.state.snackError || this.state.unknownError || this.state.snackMessage}
           </Alert>
         </Snackbar>
       </div>
     );
   }
-
 }
 
 export default App;
