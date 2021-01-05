@@ -3,6 +3,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import styles from "./Footer.module.scss";
 
+import { withTranslations } from '../../services/Translations/Translations';
+
 class Footer extends React.Component {
 
   render() {
@@ -14,7 +16,7 @@ class Footer extends React.Component {
           </div>
           <div className={styles.contractAddress}>
             <a href={'https://www.etherscan.com/address/' + process.env.REACT_APP_DMM_CONTROLLER} target={'_blank'} rel='noopener noreferrer'>
-              DMM Controller Smart Contract
+              { this.props.excerpt('footer.smartContract', this.props.language) }
             </a>
           </div>
           <div className={styles.socialWrapper}>
@@ -37,4 +39,4 @@ class Footer extends React.Component {
   };
 }
 
-export default Footer;
+export default withTranslations(Footer);

@@ -8,6 +8,8 @@ import DmmWeb3Service from '../../services/DmmWeb3Service';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { DAI, USDC } from '../../models/Tokens';
 
+import { withTranslations } from '../../services/Translations/Translations';
+
 class DmmToolbar extends React.Component {
 
   constructor(props) {
@@ -25,7 +27,7 @@ class DmmToolbar extends React.Component {
     DmmWeb3Service.removeOnWalletChange(this.walletChangeUid);
   }
 
-  render = () => {
+  render() {
     const isWalletLoaded = !!DmmWeb3Service.onboard.getState().address;
 
     return (
@@ -40,11 +42,11 @@ class DmmToolbar extends React.Component {
             </div>
           </div>
           <div className={styles.buttonsWrapper}>
-            <div className={styles.purchaseCryptoButton}>
+            {/*<div className={styles.purchaseCryptoButton}>
               <Button className={styles.loadWallet} onClick={() => this.setState({ fiatAdapterOpen: true })}>
                 Buy Crypto
               </Button>
-            </div>
+            </div>*/}
             <div className={styles.connectWalletButton}>
               {this.state.isLoading ? (
                 <CircularProgress className={styles.progressBar} color={'inherit'}/>
@@ -54,9 +56,9 @@ class DmmToolbar extends React.Component {
                   {isWalletLoaded ? (
                     <div>
                       <div>{'0x' + DmmWeb3Service.onboard.getState().address.substring(2, 4) + '...' + DmmWeb3Service.onboard.getState().address.slice(-4)}</div>
-                      <div className={styles.walletConnected}>Wallet Connected</div>
+                      <div className={styles.walletConnected}>{ this.props.excerpt('navbar.walletConnected', this.props.language) }</div>
                     </div>
-                  ) : 'Connect Wallet'}
+                  ) : this.props.excerpt('navbar.connectWallet', this.props.language)}
                 </Button>
               )}
             </div>
@@ -73,4 +75,4 @@ class DmmToolbar extends React.Component {
 
 }
 
-export default DmmToolbar;
+export default withTranslations(DmmToolbar);

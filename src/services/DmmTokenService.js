@@ -14,9 +14,9 @@ class DmmTokenService {
     const tokens = (await response.json())["data"];
     return tokens.reduce((map, token) => {
       token.dmmTokenId = token["dmm_token_id"];
-      token.address = token["dmm_token_address"];
+      token.address = token["dmm_token_address"].toLowerCase();
       token.imageUrl = token["image_url"];
-      token.underlyingTokenAddress = token["underlying_token_address"];
+      token.underlyingTokenAddress = token["underlying_token_address"].toLowerCase();
       return {...map, [token.underlyingTokenAddress]: token};
     }, {});
   }

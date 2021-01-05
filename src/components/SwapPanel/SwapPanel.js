@@ -13,6 +13,8 @@ import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
 import styles from './SwapPanel.module.scss';
 
+import { withTranslations } from '../../services/Translations/Translations';
+
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -298,13 +300,13 @@ class SwapPanel extends React.Component {
       metadataSection = (
         <div className={styles.supplyWrapper}>
           <div className={`${styles.supply} ${styles.active}`}>
-            <div className={styles.name}>Active supply:</div>
+            <div className={styles.name}>{ this.props.excerpt('swapPanel.activeSupply', this.props.language) }</div>
             <div className={styles.amount}>
               {humanize(this.props.activeSupply, 18, targetPrecision, true)}
               <span className={styles.gray}>&nbsp;{dmmToken.symbol}</span></div>
           </div>
           <div className={`${styles.supply} ${styles.total}`}>
-            <div className={styles.name}>Total supply:</div>
+            <div className={styles.name}>{ this.props.excerpt('swapPanel.totalSupply', this.props.language) }</div>
             <div className={styles.amount}>
               {humanize(this.props.totalSupply, 18, 0, true)}
               <span className={styles.gray}>&nbsp;{dmmToken.symbol}</span>
@@ -330,15 +332,15 @@ class SwapPanel extends React.Component {
               this.resetNumericState();
               this.props.setIsMinting(newSelectedIndex === 0)
             }} aria-label="Swap Tabs">
-              <Tab label="Mint"/>
-              <Tab label="Redeem"/>
+              <Tab label={this.props.excerpt('swapPanel.mint', this.props.language)}/>
+              <Tab label={this.props.excerpt('swapPanel.redeem', this.props.language)}/>
             </Tabs>
           </div>
           <div className={styles.helperText}>
             {
               this.props.isMinting ?
-                (<div>Mint your tokens into mTokens so it can earn interest.</div>) :
-                (<div>Redeem your mTokens back to tokens with interest.</div>)
+                (<div>{this.props.excerpt('swapPanel.mintSubtitle', this.props.language)}</div>) :
+                (<div>{this.props.excerpt('swapPanel.redeemSubtitle', this.props.language)}</div>)
             }
           </div>
           <div className={styles.inputForm}>
@@ -348,7 +350,7 @@ class SwapPanel extends React.Component {
                   className={styles.maxBalance}
                   onClick={() => this.onSelectMax()}
                 >
-                  MAX
+                  { this.props.excerpt('swapPanel.max', this.props.language) }
                 </div>
                 {actionLeftInputView}
               </div>
@@ -390,7 +392,7 @@ class SwapPanel extends React.Component {
                 className={styles.submitButton && (this.state.isInitialLoad || !!this.state.inputError || this.state.underlyingValue === '0' ? styles.submitButtonDisabled : '')}
                 onClick={() => this.props.onDoOperation()}
                 disabled={!!this.state.inputError || this.state.underlyingValue === '0'}>
-                {this.props.isMinting ? 'Mint' : 'Redeem'}
+                {this.props.isMinting ? this.props.excerpt('swapPanel.mint', this.props.language) : this.props.excerpt('swapPanel.redeem', this.props.language)}
               </Button>
             )}
           </div>
@@ -400,4 +402,4 @@ class SwapPanel extends React.Component {
   }
 }
 
-export default SwapPanel;
+export default withTranslations(SwapPanel);

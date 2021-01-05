@@ -7,6 +7,8 @@ import { CircularProgress } from '@material-ui/core';
 import styled, { keyframes } from 'styled-components';
 import { tokens } from '../../models/Tokens';
 
+import { withTranslations } from '../../services/Translations/Translations';
+
 const TokenWrappers = tokens.map((token, index, allTokens) => {
   const totalDuration = allTokens.length * 8;
   const delay = index * 8;
@@ -53,14 +55,14 @@ class TopSection extends React.Component {
                 }
               </div>
               <div className={styles.statSubtitle}>
-                Total Value of mTokens Purchased
+                { this.props.excerpt('header.totalmTokens', this.props.language) }
               </div>
             </div>
           </div>
           <div className={styles.rightStat}>
             {/* 0.0000001981862 per second */}
             <div className={styles.aprWrapper}>
-              Earning 6.25% APR
+              { this.props.excerpt('header.earning', this.props.language) }
             </div>
             <div>
               {this.props.tokens.map((token, index) => {
@@ -117,4 +119,4 @@ class TopSection extends React.Component {
   }
 }
 
-export default TopSection;
+export default withTranslations(TopSection);
