@@ -426,7 +426,7 @@ class App extends React.Component {
             </div>
           )}
         </div>
-        <DmmToolbarlanguage={this.state.selectedLanguage || this.state.language} loadWallet={() => this.loadWallet()} />
+        <DmmToolbar language={this.state.selectedLanguage || this.state.language} loadWallet={() => this.loadWallet()} />
         <TopSection
           language={this.state.selectedLanguage || this.state.language}
           symbolToExchangeRateMap={this.state.symbolToExchangeRateMap}
