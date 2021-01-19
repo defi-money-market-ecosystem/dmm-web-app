@@ -46,6 +46,15 @@ export const USDT = new Token(
   false,
 );
 
+export const WBTC = new Token(
+  process.env.REACT_APP_WBTC_ADDRESS.toLowerCase(),
+  'Wrapped Bitcoin',
+  'WBTC',
+  8,
+  'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
+  true,
+);
+
 export const WETH = new Token(
   process.env.REACT_APP_WETH_ADDRESS.toLowerCase(),
   'Ether',
@@ -56,7 +65,7 @@ export const WETH = new Token(
 );
 
 // Put WETH first because we alphabetize it by symbol
-export const tokens = [DAI, WETH, USDC, USDK, USDT];
+export const tokens = [DAI, WBTC, WETH, USDC, USDK, USDT];
 
 export const tokenAddressToTokenMap = tokens.reduce((map, token) => {
   map[token.address] = token;

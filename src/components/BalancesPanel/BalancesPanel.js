@@ -96,7 +96,7 @@ class BalancesPanel extends React.Component {
 
   /* TODO - Add US dollar value of assets (specifically m assets, but with ETH it'll also be useful). Will become more useful as the value of m assets and the underlying assets diverge. Can also have a dropdown in the upper right with a choice of currency. */
   render() {
-    const assetBalancesViews = tokens.map(underlyingAsset => {
+    const assetBalancesViews = tokens.filter(token => !token.isHidden).map(underlyingAsset => {
       const mAsset = this.props.dmmTokensMap ? this.props.dmmTokensMap[underlyingAsset.address.toLowerCase()] : null;
 
       const underlyingBalance =
