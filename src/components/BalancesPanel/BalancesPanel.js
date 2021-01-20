@@ -57,7 +57,7 @@ class BalancesPanel extends React.Component {
           <CountUp
             start={
               exchangeRate
-                ? Number.parseFloat(humanize(amountBN.mul(exchangeRate).div(NumberUtil._1), assetDecimals))
+                ? Number.parseFloat(humanize(amountBN.mul(exchangeRate).div(NumberUtil._1), assetDecimals, 8))
                 : 0
             }
             end={
@@ -73,6 +73,7 @@ class BalancesPanel extends React.Component {
                             .div(NumberUtil._1),
                         ),
                       assetDecimals,
+                      8,
                     ),
                   )
                 : 0
@@ -96,47 +97,49 @@ class BalancesPanel extends React.Component {
 
   /* TODO - Add US dollar value of assets (specifically m assets, but with ETH it'll also be useful). Will become more useful as the value of m assets and the underlying assets diverge. Can also have a dropdown in the upper right with a choice of currency. */
   render() {
-    const assetBalancesViews = tokens.filter(token => !token.isHidden).map(underlyingAsset => {
-      const mAsset = this.props.dmmTokensMap ? this.props.dmmTokensMap[underlyingAsset.address.toLowerCase()] : null;
+    const assetBalancesViews = tokens
+      .filter(token => !token.isHidden)
+      .map(underlyingAsset => {
+        const mAsset = this.props.dmmTokensMap ? this.props.dmmTokensMap[underlyingAsset.address.toLowerCase()] : null;
 
-      const underlyingBalance =
-        this.props.symbolToUnderlyingBalanceMap && this.props.symbolToUnderlyingBalanceMap[underlyingAsset.symbol]
-          ? this.props.symbolToUnderlyingBalanceMap[underlyingAsset.symbol]
+        const underlyingBalance =
+          this.props.symbolToUnderlyingBalanceMap && this.props.symbolToUnderlyingBalanceMap[underlyingAsset.symbol]
+            ? this.props.symbolToUnderlyingBalanceMap[underlyingAsset.symbol]
+            : _0;
+
+        const mBalance = this.props.symbolToDmmBalanceMap
+          ? this.props.symbolToDmmBalanceMap[underlyingAsset.symbol] || _0
           : _0;
 
-      const mBalance = this.props.symbolToDmmBalanceMap
-        ? this.props.symbolToDmmBalanceMap[underlyingAsset.symbol] || _0
-        : _0;
+        const decimals = Math.min(underlyingAsset.decimals, 8);
 
-      const decimals = Math.min(underlyingAsset.decimals, 8);
-
-      return (
-        <div key={`balanceRow-${underlyingAsset.symbol}`}>
-          <div className={styles.balanceRow}>
-            <div className={styles.asset}>{underlyingAsset.symbol}</div>
-            <div className={styles.amount}>
-              {humanize(underlyingBalance, underlyingAsset.decimals, decimals, true, decimals)}
+        return (
+          <div key={`balanceRow-${underlyingAsset.symbol}`}>
+            <div className={styles.balanceRow}>
+              <div className={styles.asset}>{underlyingAsset.symbol}</div>
+              <div className={styles.amount}>
+                {humanize(underlyingBalance, underlyingAsset.decimals, decimals, true, decimals)}
+              </div>
+            </div>
+            <div className={styles.balanceRow}>
+              <div className={styles.asset}>m{underlyingAsset.symbol}</div>
+              <div className={styles.amount}>
+                {humanize(mBalance, underlyingAsset.decimals, decimals, true, decimals)}
+                {this.state.width < this.state.lowerWidth ? (
+                  <div className={styles.underlyingValue}>
+                    ({mAsset ? this.mAssetToUnderlyingValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
+                  </div>
+                ) : (
+                  <span className={styles.underlyingValue}>
+                    &nbsp;({mAsset ? this.mAssetToUnderlyingValueAndLocalize(mAsset, mBalance) : 0}{' '}
+                    {underlyingAsset.symbol})
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-          <div className={styles.balanceRow}>
-            <div className={styles.asset}>m{underlyingAsset.symbol}</div>
-            <div className={styles.amount}>
-              {humanize(mBalance, underlyingAsset.decimals, decimals, true, decimals)}
-              {this.state.width < this.state.lowerWidth ? (
-                <div className={styles.underlyingValue}>
-                  ({mAsset ? this.mAssetToUnderlyingValueAndLocalize(mAsset, mBalance) : 0} {underlyingAsset.symbol})
-                </div>
-              ) : (
-                <span className={styles.underlyingValue}>
-                  &nbsp;({mAsset ? this.mAssetToUnderlyingValueAndLocalize(mAsset, mBalance) : 0}{' '}
-                  {underlyingAsset.symbol})
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      );
-    });
+        );
+      });
 
     const heightPerToken = this.state.width > this.state.lowerWidth ? 84 : 112;
     const height = tokens.length * heightPerToken + 64;
