@@ -256,12 +256,12 @@ class SwapPanel extends React.Component {
             {this.props.tokens.filter(token => token.symbol !== this.props.underlyingToken.symbol && !token.isHidden).map(token => {
               return (
                 <div key={`token-${token.symbol}`}
-                  className={styles.underlyingOption}
-                  onClick={(e) => {
-                    const targetedSymbol = isMinting ? e.target.innerHTML : e.target.innerHTML.substring(1);
-                    this.state.underlyingSelectorExpanded && this.setUnderlyingTicker(targetedSymbol);
-                    this.state.underlyingSelectorExpanded && e.stopPropagation();
-                  }}>
+                     className={styles.underlyingOption}
+                     onClick={(e) => {
+                       const targetedSymbol = isMinting ? e.target.innerHTML : e.target.innerHTML.substring(1);
+                       this.state.underlyingSelectorExpanded && this.setUnderlyingTicker(targetedSymbol);
+                       this.state.underlyingSelectorExpanded && e.stopPropagation();
+                     }}>
                   {isMinting ? token.symbol : `m${token.symbol}`}
                 </div>
               );
@@ -293,20 +293,22 @@ class SwapPanel extends React.Component {
     const actionLeftInputView = this.getLeftSideInputField(isMinting);
     const actionRightInputView = this.getRightSideInputView(isMinting);
     const dmmToken = this.props.dmmToken;
+    const underlyingToken = this.props.underlyingToken;
 
     let metadataSection;
     if (dmmToken) {
-      const targetPrecision = dmmToken.underlyingTokenAddress === WETH.addressLower ? 2 : 0;
+      const targetPrecision = underlyingToken.formatPrecision;
       metadataSection = (
         <div className={styles.supplyWrapper}>
           <div className={`${styles.supply} ${styles.active}`}>
-            <div className={styles.name}>{ this.props.excerpt('swapPanel.activeSupply', this.props.language) }</div>
+            <div className={styles.name}>{this.props.excerpt('swapPanel.activeSupply', this.props.language)}</div>
             <div className={styles.amount}>
               {humanize(this.props.activeSupply, 18, targetPrecision, true)}
-              <span className={styles.gray}>&nbsp;{dmmToken.symbol}</span></div>
+              <span className={styles.gray}>&nbsp;{dmmToken.symbol}</span>
+            </div>
           </div>
           <div className={`${styles.supply} ${styles.total}`}>
-            <div className={styles.name}>{ this.props.excerpt('swapPanel.totalSupply', this.props.language) }</div>
+            <div className={styles.name}>{this.props.excerpt('swapPanel.totalSupply', this.props.language)}</div>
             <div className={styles.amount}>
               {humanize(this.props.totalSupply, 18, 0, true)}
               <span className={styles.gray}>&nbsp;{dmmToken.symbol}</span>
@@ -350,7 +352,7 @@ class SwapPanel extends React.Component {
                   className={styles.maxBalance}
                   onClick={() => this.onSelectMax()}
                 >
-                  { this.props.excerpt('swapPanel.max', this.props.language) }
+                  {this.props.excerpt('swapPanel.max', this.props.language)}
                 </div>
                 {actionLeftInputView}
               </div>

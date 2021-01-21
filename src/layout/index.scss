@@ -10,7 +10,8 @@ body {
   padding: 0;
   font: 112.5%/1.45em 'Lato', sans-serif;
   box-sizing: border-box;
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: $white;
   color: $primary;
   font-weight: normal;

@@ -1,11 +1,10 @@
-import Web3 from "web3";
-import WalletLink from "walletlink";
+import Web3 from 'web3';
+import WalletLink from 'walletlink';
 
 class BlockNativeWalletInterfaces {
-
   constructor(props) {
     this.infuraApiKey = props.infuraApiKey;
-    this.web3ProviderUrl = `https://mainnet.infura.io/v3/${this.infuraApiKey}`
+    this.web3ProviderUrl = `https://mainnet.infura.io/v3/${this.infuraApiKey}`;
     this.walletLink = new WalletLink({
       appName: 'DeFi Money Market (DMM)',
       appLogoUrl: 'https://defimoneymarket.com/dmm-logo-square.png',
@@ -30,13 +29,10 @@ class BlockNativeWalletInterfaces {
           </g>
       </svg>`,
       wallet: async () => {
-        const provider = this.walletLink.makeWeb3Provider(
-          this.web3ProviderUrl,
-          process.env.REACT_APP_NETWORK_ID
-        );
+        const provider = this.walletLink.makeWeb3Provider(this.web3ProviderUrl, process.env.REACT_APP_NETWORK_ID);
         const web3 = new Web3(provider);
         let isLoadingObj = {
-          promise: Promise.resolve(false)
+          promise: Promise.resolve(false),
         };
         const walletInterface = {
           name: 'WalletLink',
@@ -47,7 +43,8 @@ class BlockNativeWalletInterfaces {
                 isLoadingObj.reject = reject;
               }),
             };
-            const accounts = await provider.enable()
+            const accounts = await provider
+              .enable()
               .then(accounts => {
                 if (isLoadingObj.resolve) {
                   isLoadingObj.resolve(true);
@@ -88,34 +85,37 @@ class BlockNativeWalletInterfaces {
         return {
           provider,
           interface: walletInterface,
-        }
+        };
       },
       desktop: true,
       preferred: true,
     };
     this.alphaWalletExtension = {
       name: 'Alpha Wallet',
-      iconSrc: 'https://raw.githubusercontent.com/AlphaWallet/alpha-wallet-android/master/app/src/main/res/mipmap-xxxhdpi/ic_alpha.png',
+      iconSrc:
+        'https://raw.githubusercontent.com/AlphaWallet/alpha-wallet-android/master/app/src/main/res/mipmap-xxxhdpi/ic_alpha.png',
       wallet: async () => {
         const web3 = window.web3;
-        const walletInterface = web3.currentProvider.isAlphaWallet ? {
-          name: 'Alpha Wallet',
-          connect: async () => true,
-          loading: async () => false,
-          address: {
-            get: async () => web3.eth.defaultAccount,
-          },
-          network: {
-            get: async () => web3.eth.net.getId(),
-          },
-          balance: {
-            get: async () => web3.eth.getBalance(web3.eth.defaultAccount),
-          },
-        } : null;
+        const walletInterface = web3.currentProvider.isAlphaWallet
+          ? {
+              name: 'Alpha Wallet',
+              connect: async () => true,
+              loading: async () => false,
+              address: {
+                get: async () => web3.eth.defaultAccount,
+              },
+              network: {
+                get: async () => web3.eth.net.getId(),
+              },
+              balance: {
+                get: async () => web3.eth.getBalance(web3.eth.defaultAccount),
+              },
+            }
+          : null;
         return {
           provider: web3 ? web3.currentProvider : null,
           interface: walletInterface,
-        }
+        };
       },
       desktop: false,
       mobile: true,
@@ -124,7 +124,6 @@ class BlockNativeWalletInterfaces {
 
     this.allWalletInterfaces = [this.walletLinkExtension, this.alphaWalletExtension];
   }
-
 }
 
 export default BlockNativeWalletInterfaces;
